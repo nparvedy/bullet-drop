@@ -1,60 +1,108 @@
-# 🗺️ Guide Pas à Pas : Créer votre Première Map de Combat (Zone 1)
+# 🎨 Guide Pas à Pas : Créer votre Première Map avec des Tuiles (TileMap) dans Godot 4
 
-Ce guide détaille **chaque action concrète** à effectuer dans **Godot 4** pour concevoir, structurer et tester votre première arène de combat pour *Bullet Drop*.
+Ce guide vous explique pas à pas comment **dessiner votre arène de combat tuile par tuile** (sol, murs avec collisions automatiques, obstacles, décors) en utilisant le système de **TileMap / TileSet** de Godot 4.
+
+> 🎁 **Un jeu de tuiles prêt à l'emploi** a déjà été généré pour vous dans votre projet :  
+> `res://assets/sprites/environment/tileset_arena.png` (tuiles de 32×32 px : dalles, murs, piliers, caisses, néons, etc.).
 
 ---
 
 ## 📋 Table des Matières
 
-1. [Concept & Architecture de l'Arène](#1-concept--architecture-de-larène)
-2. [Étape 1 : Création du fichier de scène](#étape-1--création-du-fichier-de-scène)
-3. [Étape 2 : Construction de l'arborescence des Nœuds](#étape-2--construction-de-larborescence-des-nœuds)
-4. [Étape 3 : Configuration pas à pas dans l'Inspecteur](#étape-3--configuration-pas-à-pas-dans-linspecteur)
-5. [Étape 4 : Configuration des Calques de Collision (Collision Layers)](#étape-4--configuration-des-calques-de-collision-collision-layers)
-6. [Étape 5 : Script de gestion de la Zone (`Zone1.gd`)](#étape-5--script-de-gestion-de-la-zone-zone1gd)
-7. [Étape 6 : Prototypes rapides (Joueur & Ennemi de test)](#étape-6--prototypes-rapides-joueur--ennemi-de-test)
-8. [Étape 7 : Test et Validation (Touche F6)](#étape-7--test-et-validation-touche-f6)
-9. [Évolution : Transformer en `BaseZone` réutilisable](#évolution--transformer-en-basezone-réutilisable)
+1. [Comprendre le fonctionnement des Tuiles dans Godot 4](#1-comprendre-le-fonctionnement-des-tuiles-dans-godot-4)
+2. [Étape 1 : Créer la scène `Zone1` et la ressource `TileSet`](#étape-1--créer-la-scène-zone1-et-la-ressource-tileset)
+3. [Étape 2 : Configurer les Collisions Physiques dans le TileSet](#étape-2--configurer-les-collisions-physiques-dans-le-tileset)
+4. [Étape 3 : Structurer les Calques de Tuiles (`TileMapLayer`)](#étape-3--structurer-les-calques-de-tuiles-tilemaplayer)
+5. [Étape 4 : Dessiner votre Arène dans l'Éditeur 2D](#étape-4--dessiner-votre-arène-dans-léditeur-2d)
+6. [Étape 5 : Placer les Éléments de Gameplay (Spawn, Ennemis, Portail)](#étape-5--placer-les-éléments-de-gameplay-spawn-ennemis-portail)
+7. [Étape 6 : Attacher le Script de Zone (`Zone1.gd`)](#étape-6--attacher-le-script-de-zone-zone1gd)
+8. [Étape 7 : Tester la Map avec la touche F6](#étape-7--tester-la-map-avec-la-touche-f6)
 
 ---
 
-## 1. Concept & Architecture de l'Arène
+## 1. Comprendre le fonctionnement des Tuiles dans Godot 4
 
-Pour respecter le Game Design de *Bullet Drop* (*Top-down arena shooter* avec quota fixe d'ennemis) :
-* **Type de zone :** Arène fermée rectangulaire (ex: `1920 × 1080` pixels).
-* **Quota :** 20 ennemis par run sur la Zone 1.
-* **Condition de fin :** Une fois les 20 ennemis éliminés, un **Portail de Sortie** s'ouvre pour passer à la zone suivante.
-
----
-
-## Étape 1 : Création du fichier de scène
-
-1. Ouvrez votre projet dans **Godot 4**.
-2. Dans le menu supérieur, cliquez sur **Scène > Nouvelle scène**.
-3. Dans le panneau de gauche *Créer un nœud racine*, cliquez sur **Scène 2D** (cela crée un nœud `Node2D`).
-4. Renommez ce nœud racine : clic droit sur `Node2D` > **Renommer** (ou touche `F2`) > tapez `Zone1`.
-5. Enregistrez la scène :
-   * Appuyez sur `Ctrl + S`.
-   * Naviguez dans le dossier `res://scenes/levels/`.
-   * Nommez le fichier `Zone1.tscn` et cliquez sur **Enregistrer**.
+* **Une Tuile (Tile) :** Un petit carré graphique (ex: $32 \times 32$ pixels).
+* **Un `TileSet` :** Votre palette de peinture. C'est ici que l'on découpe l'image et que l'on indique quelles tuiles sont **solides** (murs/obstacles) et quelles tuiles sont **traversables** (le sol).
+* **Un `TileMapLayer` :** Le calque sur lequel vous dessinez dans l'éditeur (comme dans Photoshop/GIMP avec des calques superposés).
 
 ---
 
-## Étape 2 : Construction de l'arborescence des Nœuds
+## Étape 1 : Créer la scène `Zone1` et la ressource `TileSet`
 
-Vous allez ajouter les enfants sous `Zone1`. Voici la structure exacte à obtenir :
+### 1.1. Créer la scène
+1. Ouvrez **Godot 4**.
+2. Menu supérieur : **Scène > Nouvelle scène**.
+3. Choisissez **Scène 2D** (crée un nœud `Node2D`).
+4. Renommez la racine en **`Zone1`**.
+5. Sauvegardez la scène sous : `res://scenes/levels/Zone1.tscn` (`Ctrl + S`).
+
+---
+
+### 1.2. Créer le premier calque de tuiles
+1. Sélectionnez `Zone1`, appuyez sur `Ctrl + A`.
+2. Recherchez et ajoutez un nœud **`TileMapLayer`** (ou `TileMap`).
+3. Renommez ce nœud en **`GroundLayer`** (calque du sol).
+
+---
+
+### 1.3. Créer et configurer le `TileSet`
+1. Sélectionnez `GroundLayer`.
+2. Dans l'Inspecteur à droite, trouvez la propriété **Tile Set**.
+3. Cliquez sur la case vide à côté et choisissez **Nouveau TileSet**.
+4. Cliquez sur le **TileSet** qui vient d'apparaître pour déplier ses paramètres :
+   * **Tile Size :** Laissez `X = 32`, `Y = 32`.
+
+---
+
+### 1.4. Importer la planche de tuiles dans le TileSet
+1. Regardez en bas de votre écran Godot : l'onglet **TileSet** s'est ouvert.
+2. Dans le panneau de fichiers en bas à gauche de Godot, trouvez l'image :  
+   `res://assets/sprites/environment/tileset_arena.png`.
+3. **Glissez-déposez** ce fichier `tileset_arena.png` directement dans la zone grise de l'onglet **TileSet** en bas.
+4. Une popup apparaît : *"Voulez-vous créer automatiquement les tuiles dans l'atlas ?"* 👉 Cliquez sur **Oui (Yes)**.
+5. Vos tuiles sont maintenant découpées en cases de 32×32 px prêtes à être utilisées !
+
+---
+
+## Étape 2 : Configurer les Collisions Physiques dans le TileSet
+
+Grâce à cette étape, chaque mur que vous dessinerez bloquera automatiquement le joueur et les monstres, sans aucun réglage manuel supplémentaire !
+
+1. Dans l'Inspecteur à droite, cliquez sur la ressource **TileSet** (sur `GroundLayer`).
+2. Dépliez la section **Physics Layers** (Calques physiques) :
+   * Cliquez sur **Ajouter un élément** (*Add Element*).
+   * **Collision Layer :** Cochez le calque **1** (Murs / Monde).
+   * **Collision Mask :** Laissez vide.
+3. Allez dans l'onglet **TileSet** tout en bas de l'écran :
+   * Cliquez sur l'onglet intérieur **Sélectionner** (*Select*).
+   * Cliquez sur le sous-onglet **Propriétés de peinture** (*Paint Properties* / icône de pot de peinture ou *Peindre*).
+   * Dans le menu déroulant qui s'affiche, choisissez **Physics Layer 0 > Polygone de collision 0** (*Collision Polygon 0*).
+   * **Cliquez simplement sur chaque tuile de Mur et d'Obstacle** (la 2ème et 3ème ligne de la planche) : un carré bleu/rouge de collision s'applique automatiquement sur toute la case !
+4. Sauvegardez le projet (`Ctrl + S`).
+
+---
+
+## Étape 3 : Structurer les Calques de Tuiles (`TileMapLayer`)
+
+Pour dessiner proprement sans écraser le sol quand vous posez un mur ou un décor, nous créons 3 calques qui partagent le **même TileSet** :
+
+1. Cliquez sur `GroundLayer` dans votre arbre de scène.
+2. Dans l'Inspecteur, faites clic droit sur la ressource **TileSet > Copier** (Copy).
+3. Ajoutez un deuxième enfant sous `Zone1` (`Ctrl + A`) de type **`TileMapLayer`**, renommez-le **`WallsLayer`** :
+   * Dans son Inspecteur, faites clic droit sur `Tile Set` > **Coller** (Paste).
+4. Ajoutez un troisième enfant sous `Zone1` de type **`TileMapLayer`**, renommez-le **`DecorLayer`** :
+   * Dans son Inspecteur, faites clic droit sur `Tile Set` > **Coller** (Paste).
+
+### Voici l'arborescence complète à obtenir dans `Zone1` :
 
 ```text
-Zone1 (Node2D)  <-- Scène racine [Attaché à Zone1.gd]
-├── Background (ColorRect ou Sprite2D)
-├── ArenaBounds (StaticBody2D)
-│   ├── TopWall (CollisionShape2D)
-│   ├── BottomWall (CollisionShape2D)
-│   ├── LeftWall (CollisionShape2D)
-│   └── RightWall (CollisionShape2D)
-├── Obstacles (Node2D)
-├── PlayerSpawn (Marker2D)
-├── EnemySpawners (Node2D)
+Zone1 (Node2D)  [Attaché à Zone1.gd]
+├── GroundLayer (TileMapLayer)       <-- Pour dessiner le sol
+├── WallsLayer (TileMapLayer)        <-- Pour dessiner les murs solides
+├── DecorLayer (TileMapLayer)        <-- Pour poser des néons, débris, etc.
+├── PlayerSpawn (Marker2D)           <-- Position de départ (ex: x=960, y=540)
+├── EnemySpawners (Node2D)           <-- Points de spawn des monstres
 │   ├── Spawner1 (Marker2D)
 │   ├── Spawner2 (Marker2D)
 │   ├── Spawner3 (Marker2D)
@@ -62,141 +110,82 @@ Zone1 (Node2D)  <-- Scène racine [Attaché à Zone1.gd]
 ├── Entities (Node2D)
 │   ├── Enemies (Node2D)
 │   └── Drops (Node2D)
-├── ExitPortal (Area2D)
-│   ├── PortalVisual (ColorRect ou Sprite2D)
-│   └── CollisionShape2D (CollisionShape2D)
-├── SpawnTimer (Timer)
-└── CanvasLayer_HUD (CanvasLayer)
-    └── MarginContainer (MarginContainer)
+├── ExitPortal (Area2D)              <-- Portail de sortie vers Zone 2
+│   ├── PortalVisual (ColorRect)
+│   └── CollisionShape2D (CircleShape2D)
+├── SpawnTimer (Timer)               <-- Cadence d'apparition
+└── CanvasLayer_HUD (CanvasLayer)    <-- Affichage du quota
+    └── MarginContainer
         └── LabelQuota (Label)
 ```
 
-### Comment ajouter chaque nœud :
-* Sélectionnez `Zone1`, appuyez sur `Ctrl + A` (ou clic droit > *Ajouter un nœud enfant*), cherchez le type de nœud voulu, puis validez.
-* Pour placer un nœud sous un parent spécifique (ex: les murs sous `ArenaBounds`), sélectionnez `ArenaBounds` avant de faire `Ctrl + A`.
+---
+
+## Étape 4 : Dessiner votre Arène dans l'Éditeur 2D
+
+En bas de l'écran, cliquez sur l'onglet **TileMapLayer** (ou **TileMap**) pour ouvrir la palette de dessin.
+
+### 4.1. Dessiner le Sol
+1. Dans l'arbre de scène, sélectionnez **`GroundLayer`**.
+2. En bas dans la palette, cliquez sur l'une des dalles de sol (1ère ligne de `tileset_arena.png`).
+3. Dans la barre d'outils au-dessus de la vue 2D :
+   * Choisissez l'outil **Rectangle** (icône rectangle ou touche `Shift + R`).
+   * Cliquez et glissez dans la vue 2D pour créer une grande surface au sol (ex: de $(0, 0)$ à $(1920, 1080)$, soit environ $60 \times 34$ tuiles).
+4. Prenez le **Pinceau** (touche `B`) pour peindre quelques dalles fissurées, grilles ou zones de danger au centre de l'arène pour donner du style !
 
 ---
 
-## Étape 3 : Configuration pas à pas dans l'Inspecteur
-
-### 3.1. Le Fond d'arène (`Background`)
-1. Sélectionnez le nœud `Background` (ajoutez un `ColorRect`).
-2. Dans l'Inspecteur à droite :
-   * **Layout > Transform > Size** : `X = 1920`, `Y = 1080` (ou la taille souhaitée pour votre arène).
-   * **Color** : Choisissez une couleur sombre (ex: `#1a1a24`) pour que les projectiles et personnages ressortent bien.
-
----
-
-### 3.2. Les Murs invisibles (`ArenaBounds`)
-Le nœud `ArenaBounds` (`StaticBody2D`) empêche le joueur et les ennemis de sortir de l'écran.
-
-1. Sélectionnez `ArenaBounds`.
-2. Pour chacun des 4 enfants `CollisionShape2D` :
-   * **TopWall :**
-     * Dans l'inspecteur : `Shape` > Nouveau `RectangleShape2D`.
-     * Cliquez sur le rectangle bleu créé pour éditer sa taille : `Size = (1920, 40)`.
-     * `Transform > Position` : `(960, -20)`.
-   * **BottomWall :**
-     * `Shape` > Nouveau `RectangleShape2D` > `Size = (1920, 40)`.
-     * `Transform > Position` : `(960, 1100)`.
-   * **LeftWall :**
-     * `Shape` > Nouveau `RectangleShape2D` > `Size = (40, 1080)`.
-     * `Transform > Position` : `(-20, 540)`.
-   * **RightWall :**
-     * `Shape` > Nouveau `RectangleShape2D` > `Size = (40, 1080)`.
-     * `Transform > Position` : `(1940, 540)`.
+### 4.2. Dessiner les Murs Extérieurs et les Piliers
+1. Dans l'arbre de scène, sélectionnez **`WallsLayer`**.
+2. En bas dans la palette, choisissez les tuiles de bordure de mur (2ème ligne).
+3. Prenez l'outil **Ligne** ou **Pinceau** et dessinez les 4 murs fermés tout autour de votre sol.
+4. Au centre de l'arène, placez **4 à 6 piliers ou caisses** (3ème ligne) : ils serviront de boucliers naturels au joueur pour esquiver les tirs ennemis !
+*(Toutes ces tuiles ont la collision physique active configurée à l'étape 2).*
 
 ---
 
-### 3.3. Le Point de départ du Joueur (`PlayerSpawn`)
-1. Sélectionnez `PlayerSpawn` (`Marker2D`).
-2. Dans l'Inspecteur : `Transform > Position` = `(960, 540)` (plein centre de la carte).
-3. Activez `Gizmos > Display Folded` ou vérifiez dans la vue 2D que la croix rouge du marker est bien au centre.
+### 4.3. Ajouter des Décorations
+1. Sélectionnez **`DecorLayer`**.
+2. Posez des balises lumineuses (néons bleus/oranges), des taches d'huile ou des débris sur le sol.
 
 ---
 
-### 3.4. Les Points d'apparition des Ennemis (`EnemySpawners`)
-1. Placez les 4 `Marker2D` autour de la zone pour varier les points d'arrivée :
-   * `Spawner1` : `Transform > Position` = `(150, 150)` (Haut Gauche)
-   * `Spawner2` : `Transform > Position` = `(1770, 150)` (Haut Droite)
-   * `Spawner3` : `Transform > Position` = `(150, 930)` (Bas Gauche)
-   * `Spawner4` : `Transform > Position` = `(1770, 930)` (Bas Droite)
+## Étape 5 : Placer les Éléments de Gameplay (Spawn, Ennemis, Portail)
+
+1. **`PlayerSpawn` (`Marker2D`) :**
+   * Placez-le au centre de l'arène (ex: `Position = (960, 540)`).
+
+2. **`EnemySpawners` (`Node2D`) :**
+   * Ajoutez 4 nœuds `Marker2D` enfants (`Spawner1`, `Spawner2`, etc.).
+   * Placez-les aux 4 angles intérieurs de votre arène de tuiles.
+
+3. **`ExitPortal` (`Area2D`) :**
+   * Positionnez-le en haut au centre de l'arène.
+   * Ajoutez un `CollisionShape2D` (`CircleShape2D` de rayon 32).
+   * Ajoutez un visuel (`ColorRect` cyan $64 \times 64$ ou sprite).
+   * Dans l'Inspecteur : `Visibility > Visible = false`, `Monitoring = false`.
+
+4. **`SpawnTimer` (`Timer`) :**
+   * `Wait Time = 1.5`, `Autostart = true`, `One Shot = false`.
+
+5. **`CanvasLayer_HUD` :**
+   * Ajoutez un `Label` (`LabelQuota`) affichant *"Ennemis restants : 20 / 20"*.
 
 ---
 
-### 3.5. Le Portail de Sortie (`ExitPortal`)
-1. Sous `ExitPortal` (`Area2D`) :
-   * Positionnez `ExitPortal` : `Transform > Position` = `(960, 120)` (Haut centre).
-   * **PortalVisual** (`ColorRect`) : `Size = (64, 64)`, `Position = (-32, -32)`, `Color = Cyan` ou `#00ffff`.
-   * **CollisionShape2D** : `Shape` > Nouveau `CircleShape2D` avec `Radius = 32`.
-2. Par défaut, masquez-le car il ne s'active qu'à la fin :
-   * `Visibility > Visible` = `false`.
-   * `Monitoring` = `false`.
-   * `Monitorable` = `false`.
+## Étape 6 : Attacher le Script de Zone (`Zone1.gd`)
 
----
-
-### 3.6. Le Timer de Vagues (`SpawnTimer`)
-1. Sélectionnez `SpawnTimer` (`Timer`).
-2. Dans l'Inspecteur :
-   * `Wait Time` : `1.5` (Un ennemi apparaitra toutes les 1.5 secondes).
-   * `Autostart` : `true`.
-   * `One Shot` : `false`.
-
----
-
-### 3.7. Le HUD du Quota (`CanvasLayer_HUD`)
-1. Sous `CanvasLayer_HUD` > `MarginContainer` > `LabelQuota` (`Label`) :
-   * `MarginContainer` : Layout > Ancrage > **Haut Centre** (Top Wide ou Top Center).
-   * `LabelQuota` :
-     * Texte : `Ennemis restants : 20 / 20`
-     * `Theme Overrides > Font Sizes > Font Size` : `24`.
-
----
-
-## Étape 4 : Configuration des Calques de Collision (Collision Layers)
-
-Pour un jeu propre et sans bugs de collision, configurez vos calques dans Godot :
-
-1. Allez dans le menu : **Projet > Paramètres du projet > Onglet Général**.
-2. Dans le menu de gauche, descendez jusqu'à **Layer Names > 2D Physics**.
-3. Nommez vos calques ainsi :
-   * **Layer 1 :** `World` (Murs, obstacles)
-   * **Layer 2 :** `Player` (Le joueur)
-   * **Layer 3 :** `Enemies` (Les monstres)
-   * **Layer 4 :** `PlayerProjectiles` (Balles tirées par le joueur)
-   * **Layer 5 :** `EnemyProjectiles` (Tirs des ennemis)
-   * **Layer 6 :** `Drops` (Bonus et points au sol)
-   * **Layer 7 :** `Portals` (Portail de fin)
-
-4. Appliquez sur `ArenaBounds` (`StaticBody2D`) :
-   * `Collision > Layer` : Cochez **World (1)** uniquement.
-   * `Collision > Mask` : Laissez vide.
-5. Appliquez sur `ExitPortal` (`Area2D`) :
-   * `Collision > Layer` : Cochez **Portals (7)**.
-   * `Collision > Mask` : Cochez **Player (2)** (pour détecter quand le joueur entre dedans).
-
----
-
-## Étape 5 : Script de gestion de la Zone (`Zone1.gd`)
-
-1. Sélectionnez le nœud racine `Zone1`.
-2. Cliquez sur l'icône de script (parchemin avec un `+`) au-dessus de l'arbre de scène.
-3. Choisissez le chemin : `res://scenes/levels/Zone1.gd` (ou `res://scripts/levels/Zone1.gd`).
-4. Collez le code suivant :
+Sélectionnez `Zone1`, cliquez sur l'icône de script (`+`) et enregistrez sous `res://scenes/levels/Zone1.gd` :
 
 ```gdscript
 extends Node2D
 class_name CombatZone
 
-# --- EXPORTS & CONFIGURATION ---
 @export_group("Configuration de la Zone")
-@export var zone_name: String = "Zone 1 - L'Arène des Ombres"
 @export var total_enemies_quota: int = 20
-@export var enemy_scene: PackedScene # Glissez votre scène d'ennemi ici dans l'Inspecteur
-@export var player_scene: PackedScene # Glissez votre scène Player ici si instancié par script
+@export var enemy_scene: PackedScene
+@export var player_scene: PackedScene
 
-# --- RÉFÉRENCES AUX NŒUDS ---
 @onready var player_spawn: Marker2D = $PlayerSpawn
 @onready var enemy_spawners: Node2D = $EnemySpawners
 @onready var enemies_container: Node2D = $Entities/Enemies
@@ -204,63 +193,46 @@ class_name CombatZone
 @onready var spawn_timer: Timer = $SpawnTimer
 @onready var label_quota: Label = $CanvasLayer_HUD/MarginContainer/LabelQuota
 
-# --- VARIABLES D'ÉTAT ---
 var enemies_spawned_count: int = 0
 var enemies_alive_count: int = 0
 var zone_cleared: bool = false
 
 func _ready() -> void:
-	# 1. Initialiser le portail (désactivé)
 	exit_portal.visible = false
 	exit_portal.monitoring = false
 	exit_portal.body_entered.connect(_on_exit_portal_body_entered)
 	
-	# 2. Connecter le timer de spawn
 	spawn_timer.timeout.connect(_on_spawn_timer_timeout)
-	
-	# 3. Mettre à jour l'affichage
 	_update_hud()
-	
-	# 4. Spawner le joueur si une scène est assignée
 	_spawn_player()
-	
-	print("[Zone1] Initialisée avec un quota de %d ennemis." % total_enemies_quota)
 
 func _spawn_player() -> void:
 	if player_scene:
 		var player_instance = player_scene.instantiate()
 		player_instance.global_position = player_spawn.global_position
 		add_child(player_instance)
-		# Assigner le joueur au groupe "player"
 		if not player_instance.is_in_group("player"):
 			player_instance.add_to_group("player")
 
 func _on_spawn_timer_timeout() -> void:
-	# Arrêter de spawner si le quota total est atteint
 	if enemies_spawned_count >= total_enemies_quota:
 		spawn_timer.stop()
 		return
-	
 	_spawn_single_enemy()
 
 func _spawn_single_enemy() -> void:
 	if not enemy_scene:
-		push_warning("[Zone1] Aucune scène d'ennemi (enemy_scene) assignée dans l'Inspecteur !")
 		return
 	
-	# Sélectionner un spawner aléatoire
 	var spawners = enemy_spawners.get_children()
 	if spawners.is_empty():
 		return
 	var chosen_spawner: Marker2D = spawners.pick_random()
 	
-	# Instancier l'ennemi
-	var enemy_instance = enemy_scene.instantiate()
-	enemy_instance.global_position = chosen_spawner.global_position
-	enemies_container.add_child(enemy_instance)
-	
-	# Suivre la mort de l'ennemi via son signal tree_exiting ou signal personnalisé
-	enemy_instance.tree_exited.connect(_on_enemy_defeated)
+	var enemy = enemy_scene.instantiate()
+	enemy.global_position = chosen_spawner.global_position
+	enemies_container.add_child(enemy)
+	enemy.tree_exited.connect(_on_enemy_defeated)
 	
 	enemies_spawned_count += 1
 	enemies_alive_count += 1
@@ -269,8 +241,6 @@ func _spawn_single_enemy() -> void:
 func _on_enemy_defeated() -> void:
 	enemies_alive_count -= 1
 	_update_hud()
-	
-	# Vérifier si la zone est nettoyée (quota total atteint ET plus aucun monstre vivant)
 	if enemies_spawned_count >= total_enemies_quota and enemies_alive_count <= 0:
 		_on_zone_cleared()
 
@@ -278,22 +248,15 @@ func _on_zone_cleared() -> void:
 	if zone_cleared:
 		return
 	zone_cleared = true
-	print("[Zone1] 🎉 Zone nettoyée ! Ouverture du portail !")
-	
-	# Activer et afficher le portail
 	exit_portal.visible = true
 	exit_portal.monitoring = true
-	
-	# Effet visuel optionnel (ex: Animation / Flash)
 	if label_quota:
-		label_quota.text = "🏆 ZONE NETTOYÉE ! Prenez le portail !"
+		label_quota.text = "🏆 ZONE 1 NETTOYÉE ! Prenez le portail !"
 		label_quota.modulate = Color.GREEN
 
 func _on_exit_portal_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player") or body.name == "Player":
-		print("[Zone1] Le joueur entre dans le portail ! Passage à la Zone 2...")
-		# Ici : transition vers la zone suivante
-		# get_tree().change_scene_to_file("res://scenes/levels/Zone2.tscn")
+		print("Victoire Zone 1 ! Transition vers Zone 2...")
 
 func _update_hud() -> void:
 	if label_quota:
@@ -303,93 +266,11 @@ func _update_hud() -> void:
 
 ---
 
-## Étape 6 : Prototypes rapides (Joueur & Ennemi de test)
+## Étape 7 : Tester la Map avec la touche F6
 
-Si vos scènes finales de joueur et d'ennemis ne sont pas encore prêtes, créez ces 2 scènes de test légères en 2 minutes pour valider immédiatement votre map.
-
-### 6.1. Joueur Temporaire (`res://scenes/entities/player/TestPlayer.tscn`)
-1. Créez une nouvelle scène avec un `CharacterBody2D`, renommé `TestPlayer`.
-2. Ajoutez un enfant `ColorRect` (`Size: 32x32`, `Position: -16, -16`, `Color: Bleu`).
-3. Ajoutez un enfant `CollisionShape2D` (`RectangleShape2D: 32x32`).
-4. Dans `Collision > Layer` = Cochez `Player (2)`, `Mask` = Cochez `World (1)`.
-5. Ajoutez le script `TestPlayer.gd` :
-
-```gdscript
-extends CharacterBody2D
-
-@export var speed: float = 300.0
-
-func _ready() -> void:
-	add_to_group("player")
-
-func _physics_process(_delta: float) -> void:
-	var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	velocity = direction * speed
-	move_and_slide()
-```
-
-6. Sauvegardez dans `res://scenes/entities/player/TestPlayer.tscn`.
-
----
-
-### 6.2. Ennemi Temporaire (`res://scenes/entities/enemies/TestEnemy.tscn`)
-1. Créez une nouvelle scène avec un `CharacterBody2D`, renommé `TestEnemy`.
-2. Ajoutez un enfant `ColorRect` (`Size: 28x28`, `Position: -14, -14`, `Color: Rouge`).
-3. Ajoutez un enfant `CollisionShape2D` (`CircleShape2D: radius 14`).
-4. Dans `Collision > Layer` = Cochez `Enemies (3)`, `Mask` = Cochez `World (1)` et `Player (2)`.
-5. Ajoutez un enfant `Timer` nommé `LifeTimer` (`Wait Time: 4.0`, `Autostart: true`, `One Shot: true`).
-6. Ajoutez le script `TestEnemy.gd` :
-
-```gdscript
-extends CharacterBody2D
-
-@export var speed: float = 100.0
-var player_target: Node2D = null
-
-func _ready() -> void:
-	add_to_group("enemies")
-	# Trouver le joueur
-	var players = get_tree().get_nodes_in_group("player")
-	if not players.is_empty():
-		player_target = players[0]
-	
-	# Détruire l'ennemi automatiquement au bout de 4s (simule une mort pour le test)
-	$LifeTimer.timeout.connect(queue_free)
-
-func _physics_process(_delta: float) -> void:
-	if player_target:
-		var dir = (player_target.global_position - global_position).normalized()
-		velocity = dir * speed
-		move_and_slide()
-```
-
-7. Sauvegardez dans `res://scenes/entities/enemies/TestEnemy.tscn`.
-
----
-
-## Étape 7 : Test et Validation (Touche F6)
-
-1. Ouvrez votre scène `res://scenes/levels/Zone1.tscn`.
-2. Dans l'Inspecteur de la racine `Zone1` :
-   * Glissez `TestPlayer.tscn` dans le champ `Player Scene`.
-   * Glissez `TestEnemy.tscn` dans le champ `Enemy Scene`.
-3. Appuyez sur la touche **`F6`** (Exécuter la scène courante).
-
-### Checklist de bon fonctionnement :
-- [ ] Le carré bleu (Joueur) bouge avec les flèches / ZQSD et bute contre les 4 murs.
-- [ ] Les carrés rouges (Ennemis) apparaissent aux 4 coins et convergent vers le joueur.
-- [ ] Le compteur en haut diminue au fur et à mesure que les ennemis disparaissent.
-- [ ] Une fois les 20 ennemis éliminés, le portail Cyan apparaît en haut de l'écran.
-- [ ] Quand le joueur touche le portail, la console affiche la validation de victoire de zone.
-
----
-
-## Évolution : Transformer en `BaseZone` réutilisable
-
-Quand votre Zone 1 fonctionne :
-1. Renommez `Zone1.tscn` en `BaseZone.tscn` (ou dupliquez-la).
-2. Pour créer la **Zone 2**, faites clic droit sur `BaseZone.tscn` > **Nouvelle scène héritée**.
-3. Vous n'aurez plus qu'à changer :
-   * La texture du sol / couleur d'ambiance.
-   * La disposition des obstacles.
-   * Les types d'ennemis dans le quota.
+1. Dans l'Inspecteur de `Zone1`, assignez votre scène de Joueur et votre scène d'Ennemi.
+2. Appuyez sur **`F6`** pour lancer la scène `Zone1.tscn`.
+3. **Résultat :**
+   * Le joueur se déplace dans votre arène dessinée à la main.
+   * Il est physiquement bloqué par les murs et piliers que vous avez peints.
+   * Les ennemis apparaissent aux spawners, et le portail s'ouvre à la fin du quota !
