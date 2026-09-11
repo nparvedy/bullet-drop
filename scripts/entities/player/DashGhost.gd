@@ -11,4 +11,4 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	draw_circle(Vector2.ZERO, 16.0, Color(0.3, 0.7, 1.0, alpha * 0.5))
-	draw_arc(Vector2.ZERO, 16.0, 0, TAU, 32, Color(0.1, 0.4, 0.9, alpha), 2.0)
+	draw_arc(Vector2.ZERO, 16.0, 0, TAU, 32, Color(0.1, 0.4, 0.9, alpha), 2.0, true)

@@ -233,7 +233,7 @@ func _draw() -> void:
 
 	# Corps circulaire du monstre
 	draw_circle(Vector2.ZERO, 16.0, body_color)
-	draw_arc(Vector2.ZERO, 16.0, 0, TAU, 32, border_color, 2.5)
+	draw_arc(Vector2.ZERO, 16.0, 0, TAU, 32, border_color, 2.5, true)
 
 	# Yeux menaçants orientés vers le joueur
 	var look_dir = Vector2.RIGHT.rotated(look_angle)

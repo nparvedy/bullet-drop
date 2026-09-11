@@ -72,7 +72,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 	# Détection de l'input d'esquive (MAJ / Shift)
-	if (Input.is_action_just_pressed("dash") or Input.is_key_pressed(KEY_SHIFT)) and dash_cooldown_left <= 0.0:
+	if Input.is_action_just_pressed("dash") and dash_cooldown_left <= 0.0:
 		_start_dash()
 
 func _process(delta: float) -> void:
@@ -198,7 +198,7 @@ func _draw() -> void:
 
 	# Corps circulaire
 	draw_circle(Vector2.ZERO, 16.0, body_color)
-	draw_arc(Vector2.ZERO, 16.0, 0, TAU, 36, border_color, 2.5)
+	draw_arc(Vector2.ZERO, 16.0, 0, TAU, 36, border_color, 2.5, true)
 
 	# Yeux orientés vers la souris
 	var look_dir = Vector2.RIGHT.rotated(look_angle)

@@ -1,14 +1,14 @@
 extends CanvasLayer
 class_name HUD
 
-@onready var health_bar: ProgressBar = $Control/BottomLeftHUD/Margin/VBox/HealthContainer/HealthBar
-@onready var health_text: Label = $Control/BottomLeftHUD/Margin/VBox/HealthContainer/HealthText
-@onready var ammo_text: Label = $Control/BottomLeftHUD/Margin/VBox/AmmoContainer/AmmoText
-@onready var dash_status: Label = $Control/BottomLeftHUD/Margin/VBox/DashContainer/DashStatus
-@onready var dash_bar: ProgressBar = $Control/BottomLeftHUD/Margin/VBox/DashContainer/DashBar
-@onready var quota_label: Label = $Control/TopCenterHUD/Margin/QuotaLabel
-@onready var death_panel: PanelContainer = $Control/DeathPanel
-@onready var victory_panel: PanelContainer = $Control/VictoryPanel
+@onready var health_bar: ProgressBar = get_node_or_null("Control/BottomLeftHUD/Margin/VBox/HealthContainer/HealthBar")
+@onready var health_text: Label = get_node_or_null("Control/BottomLeftHUD/Margin/VBox/HealthContainer/HealthText")
+@onready var ammo_text: Label = get_node_or_null("Control/BottomLeftHUD/Margin/VBox/AmmoContainer/AmmoText")
+@onready var dash_status: Label = get_node_or_null("Control/BottomLeftHUD/Margin/VBox/DashContainer/DashStatus")
+@onready var dash_bar: ProgressBar = get_node_or_null("Control/BottomLeftHUD/Margin/VBox/DashContainer/DashBar")
+@onready var quota_label: Label = get_node_or_null("Control/TopCenterHUD/Margin/QuotaLabel")
+@onready var death_panel: PanelContainer = get_node_or_null("Control/DeathPanel")
+@onready var victory_panel: PanelContainer = get_node_or_null("Control/VictoryPanel")
 
 var dash_tween: Tween
 var health_tween: Tween
@@ -83,6 +83,9 @@ func _on_zone_enemies_updated(remaining: int, total: int) -> void:
 		else:
 			quota_label.text = "👾 MONSTRES RESTANTS : %d / %d" % [remaining, total]
 			quota_label.modulate = Color(1.0, 0.9, 0.4)
+			
+	if remaining <= 0 and victory_panel:
+		victory_panel.visible = true
 
 func _on_player_died() -> void:
 	if death_panel:
