@@ -1,20 +1,33 @@
 extends Node2D
 class_name Zone1
 
-@export var total_monsters: int = 5
+@export var respawn_delay: float = 5.0
+@export var enemy_scene: PackedScene
 @export var ammo_drop_scene: PackedScene
 
 var enemies_alive: int = 5
+var total_kills: int = 0
 var emergency_drop_timer: float = 0.0
 var next_emergency_drop_delay: float = 0.0
 var player_has_zero_ammo: bool = false
 var player_ref: Player = null
+
+# Positions prédéfinies d'apparition dans l'arène
+var spawn_points: Array[Vector2] = [
+	Vector2(450, 280),   # Haut-Gauche
+	Vector2(1470, 280),  # Haut-Droite
+	Vector2(450, 780),   # Bas-Gauche
+	Vector2(1470, 780),  # Bas-Droite
+	Vector2(960, 200)    # Haut-Centre
+]
 
 @onready var enemies_container: Node2D = $Entities/Enemies
 @onready var drops_container: Node2D = $Entities/Drops
 @onready var player_spawn: Marker2D = $PlayerSpawn
 
 func _ready() -> void:
+	if not enemy_scene:
+		enemy_scene = load("res://scenes/entities/enemies/Enemy.tscn")
 	if not ammo_drop_scene:
 		ammo_drop_scene = load("res://scenes/weapons/AmmoDrop.tscn")
 		
@@ -31,10 +44,9 @@ func _ready() -> void:
 func _setup_enemies() -> void:
 	var existing_enemies = get_tree().get_nodes_in_group("enemies")
 	enemies_alive = existing_enemies.size()
-	total_monsters = enemies_alive
 	
 	if has_node("/root/EventBus"):
-		EventBus.zone_enemies_updated.emit(enemies_alive, total_monsters)
+		EventBus.zone_enemies_updated.emit(enemies_alive, total_kills)
 
 func _process(delta: float) -> void:
 	# Système de drop de secours (entre 5s et 10s uniquement quand le joueur a 0 munition)
@@ -77,11 +89,35 @@ func _spawn_emergency_ammo_drop() -> void:
 
 func _on_enemy_died(_enemy: Node2D, _pos: Vector2) -> void:
 	enemies_alive = max(0, enemies_alive - 1)
+	total_kills += 1
+	
 	if has_node("/root/EventBus"):
-		EventBus.zone_enemies_updated.emit(enemies_alive, total_monsters)
+		EventBus.zone_enemies_updated.emit(enemies_alive, total_kills)
 		
-	if enemies_alive <= 0:
-		_on_zone_completed()
+	# Respawn infini du monstre après 5 secondes
+	get_tree().create_timer(respawn_delay).timeout.connect(_respawn_single_enemy)
 
-func _on_zone_completed() -> void:
-	print("Zone 1 nettoyée ! Tous les monstres ont été éliminés.")
+func _respawn_single_enemy() -> void:
+	if not enemy_scene or not is_inside_tree():
+		return
+		
+	var new_enemy = enemy_scene.instantiate()
+	
+	# Choix d'un point d'apparition parmi les points prédéfinis
+	var spawn_pos = spawn_points.pick_random()
+	new_enemy.global_position = spawn_pos
+	
+	# Configuration aléatoire du monstre (100 à 200 HP, 50% de chance d'être tireur)
+	var hp = round(randf_range(100.0, 200.0))
+	new_enemy.max_health = hp
+	new_enemy.current_health = hp
+	new_enemy.can_shoot = (randf() > 0.4) # ~60% tireurs, 40% chasseurs
+	
+	if enemies_container:
+		enemies_container.add_child(new_enemy)
+	else:
+		add_child(new_enemy)
+		
+	enemies_alive += 1
+	if has_node("/root/EventBus"):
+		EventBus.zone_enemies_updated.emit(enemies_alive, total_kills)

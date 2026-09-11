@@ -75,17 +75,10 @@ func _on_player_dash_ready() -> void:
 	if dash_bar:
 		dash_bar.value = dash_bar.max_value
 
-func _on_zone_enemies_updated(remaining: int, total: int) -> void:
+func _on_zone_enemies_updated(remaining: int, total_kills: int) -> void:
 	if quota_label:
-		if remaining <= 0:
-			quota_label.text = "🏆 ZONE 1 NETTOYÉE !"
-			quota_label.modulate = Color(0.2, 1.0, 0.4)
-		else:
-			quota_label.text = "👾 MONSTRES RESTANTS : %d / %d" % [remaining, total]
-			quota_label.modulate = Color(1.0, 0.9, 0.4)
-			
-	if remaining <= 0 and victory_panel:
-		victory_panel.visible = true
+		quota_label.text = "🎯 ENTRAÎNEMENT | Actifs : %d | Éliminations : %d" % [remaining, total_kills]
+		quota_label.modulate = Color(1.0, 0.9, 0.4)
 
 func _on_player_died() -> void:
 	if death_panel:
