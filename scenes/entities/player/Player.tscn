@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://cfpo0lh1je03y"]
+
+[ext_resource type="Script" path="res://scripts/entities/player/Player.gd" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/Weapon.tscn" id="2_weapon"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_player"]
+radius = 16.0
+
+[node name="Player" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 5
+script = ExtResource("1_player")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_player")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(1.15, 1.15)
+position_smoothing_enabled = true
+position_smoothing_speed = 7.0
+
+[node name="Weapon" parent="." instance=ExtResource("2_weapon")]

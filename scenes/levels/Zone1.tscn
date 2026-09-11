@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=4 uid="uid://o6fx1bmrme8y"]
+[gd_scene format=4 uid="uid://bl5yjsvqwiiqs"]
 
 [ext_resource type="Script" path="res://scripts/levels/Zone1.gd" id="1_zone1_script"]
 [ext_resource type="Texture2D" uid="uid://b0eirb0d3x8wn" path="res://assets/sprites/environment/tileset_arena.png" id="1_t8umi"]

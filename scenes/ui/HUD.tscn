@@ -1,0 +1,185 @@
+[gd_scene format=3 uid="uid://chudscene01"]
+
+[ext_resource type="Script" path="res://scripts/ui/HUD.gd" id="1_hud"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud_bg"]
+bg_color = Color(0.08, 0.1, 0.14, 0.85)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.35, 0.5, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
+bg_color = Color(0.2, 0.85, 0.35, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_bg"]
+bg_color = Color(0.12, 0.12, 0.15, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dash_fill"]
+bg_color = Color(0.2, 0.65, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_hud")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BottomLeftHUD" type="PanelContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -180.0
+offset_right = 380.0
+offset_bottom = -30.0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_bg")
+
+[node name="Margin" type="MarginContainer" parent="Control/BottomLeftHUD"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="VBox" type="VBoxContainer" parent="Control/BottomLeftHUD/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HealthContainer" type="VBoxContainer" parent="Control/BottomLeftHUD/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HealthText" type="Label" parent="Control/BottomLeftHUD/Margin/VBox/HealthContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "PV : 100 / 100"
+
+[node name="HealthBar" type="ProgressBar" parent="Control/BottomLeftHUD/Margin/VBox/HealthContainer"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hp_fill")
+value = 100.0
+show_percentage = false
+
+[node name="AmmoContainer" type="HBoxContainer" parent="Control/BottomLeftHUD/Margin/VBox"]
+layout_mode = 2
+
+[node name="AmmoText" type="Label" parent="Control/BottomLeftHUD/Margin/VBox/AmmoContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 15
+text = "⚡ MUNITIONS : 100"
+
+[node name="DashContainer" type="VBoxContainer" parent="Control/BottomLeftHUD/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="DashStatus" type="Label" parent="Control/BottomLeftHUD/Margin/VBox/DashContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.95, 0.4, 1)
+theme_override_font_sizes/font_size = 13
+text = "ESQUIVE [MAJ] : PRÊTE"
+
+[node name="DashBar" type="ProgressBar" parent="Control/BottomLeftHUD/Margin/VBox/DashContainer"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_dash_fill")
+max_value = 2.0
+value = 2.0
+show_percentage = false
+
+[node name="TopCenterHUD" type="PanelContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -160.0
+offset_top = 20.0
+offset_right = 160.0
+offset_bottom = 65.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_bg")
+
+[node name="Margin" type="MarginContainer" parent="Control/TopCenterHUD"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="QuotaLabel" type="Label" parent="Control/TopCenterHUD/Margin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 16
+text = "👾 MONSTRES RESTANTS : 5 / 5"
+horizontal_alignment = 1
+
+[node name="DeathPanel" type="PanelContainer" parent="Control"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -100.0
+offset_right = 200.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_bg")
+
+[node name="Margin" type="MarginContainer" parent="Control/DeathPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="Control/DeathPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Title" type="Label" parent="Control/DeathPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 28
+text = "💀 VOUS ÊTES MORT !"
+horizontal_alignment = 1
+
+[node name="Sub" type="Label" parent="Control/DeathPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Appuyez sur 'R' pour recommencer"
+horizontal_alignment = 1
