@@ -123,18 +123,25 @@ func _spawn_floating_text(text: String, col: Color) -> void:
 	var label = Label.new()
 	label.text = text
 	label.modulate = col
-	label.theme = load("res://scenes/ui/HUD.tscn").get_node("Control/BottomLeftHUD/Margin/VBox/HealthContainer/HealthText").theme if ResourceLoader.exists("res://scenes/ui/HUD.tscn") else null
 	label.add_theme_font_size_override("font_size", 18)
 	label.add_theme_color_override("font_shadow_color", Color.BLACK)
 	label.add_theme_constant_override("shadow_outline_size", 2)
-	label.global_position = global_position + Vector2(-30, -25)
 	label.z_index = 50
 	
-	var current_scene = get_tree().current_scene
+	var current_scene = null
+	if is_inside_tree() and get_tree():
+		current_scene = get_tree().current_scene
+	if not current_scene and get_parent():
+		current_scene = get_parent()
+		
 	if current_scene:
 		current_scene.add_child(label)
+		label.global_position = global_position + Vector2(-30, -25)
 		var t = label.create_tween()
-		t.set_parallel(true)
-		t.tween_property(label, "global_position:y", label.global_position.y - 45.0, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		t.tween_property(label, "modulate:a", 0.0, 0.8).set_delay(0.3)
-		t.finished.connect(label.queue_free)
+		if t:
+			t.set_parallel(true)
+			t.tween_property(label, "global_position:y", label.global_position.y - 45.0, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			t.tween_property(label, "modulate:a", 0.0, 0.8).set_delay(0.3)
+			t.chain().tween_callback(label.queue_free)
+		else:
+			label.queue_free()

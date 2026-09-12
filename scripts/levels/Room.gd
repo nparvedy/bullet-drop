@@ -124,22 +124,24 @@ func _spawn_enemy() -> void:
 	
 	var spawn_pos = global_position
 	if not spawners.is_empty():
-		spawn_pos = spawners.pick_random().global_position
+		var idx = enemies_spawned % spawners.size()
+		spawn_pos = spawners[idx].global_position + Vector2(randf_range(-15, 15), randf_range(-15, 15))
 	else:
 		spawn_pos += Vector2(randf_range(-100, 100), randf_range(-100, 100))
 		
 	var enemy: Enemy = enemy_scene.instantiate()
-	enemy.global_position = spawn_pos
-	
-	# Chance d'être tireur augmente avec les salles (R1: 30%, R2: 50%, R3: 65%, R4: 80%)
-	var shooter_chance = 0.2 + (room_index * 0.15)
-	enemy.can_shoot = (randf() <= shooter_chance)
 	
 	if enemies_container:
 		enemies_container.add_child(enemy)
 	else:
 		add_child(enemy)
 		
+	enemy.global_position = spawn_pos
+	
+	# Chance d'être tireur augmente avec les salles (R1: 30%, R2: 50%, R3: 65%, R4: 80%)
+	var shooter_chance = 0.2 + (room_index * 0.15)
+	enemy.can_shoot = (randf() <= shooter_chance)
+	
 	enemy.set_enemy_level(enemy_level, 1)
 	active_enemies.append(enemy)
 	enemies_spawned += 1
@@ -160,15 +162,16 @@ func _spawn_boss() -> void:
 	var spawn_pos = spawners[0].global_position if not spawners.is_empty() else global_position
 	
 	var boss: BossEnemy = boss_scene.instantiate()
-	boss.global_position = spawn_pos
-	boss.level = 5
-	boss.zone_number = 1
 	
 	if enemies_container:
 		enemies_container.add_child(boss)
 	else:
 		add_child(boss)
 		
+	boss.global_position = spawn_pos
+	boss.level = 5
+	boss.zone_number = 1
+	
 	active_enemies.append(boss)
 	enemies_spawned += 1
 	if boss.has_signal("died"):
