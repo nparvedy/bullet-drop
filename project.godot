@@ -18,6 +18,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 EventBus="*res://scripts/autoloads/EventBus.gd"
+SaveManager="*res://scripts/autoloads/SaveManager.gd"
+MonsterStatsDatabase="*res://scripts/data/MonsterStatsDatabase.gd"
 
 [display]
 

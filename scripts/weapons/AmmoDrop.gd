@@ -33,8 +33,9 @@ func _on_body_entered(body: Node2D) -> void:
 		_spawn_pickup_text()
 		
 		# Emission de signal
-		if has_node("/root/EventBus"):
-			EventBus.ammo_collected.emit(ammo_amount)
+		var bus = get_node_or_null("/root/EventBus") if is_inside_tree() else null
+		if bus:
+			bus.ammo_collected.emit(ammo_amount)
 		
 		queue_free()
 

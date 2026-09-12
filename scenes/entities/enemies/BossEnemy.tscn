@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://cbossenemy001"]
+
+[ext_resource type="Script" path="res://scripts/entities/enemies/BossEnemy.gd" id="1_boss"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/enemy_shooter.png" id="2_body"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/enemy_eyes.png" id="3_eyes"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/enemy_pupils.png" id="4_pupils"]
+[ext_resource type="Texture2D" path="res://assets/sprites/weapons/weapon_pistol.png" id="5_gun"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_boss"]
+radius = 38.0
+
+[node name="BossEnemy" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 7
+script = ExtResource("1_boss")
+
+[node name="BodySprite" type="Sprite2D" parent="."]
+modulate = Color(1, 0.25, 0.25, 1)
+scale = Vector2(1.25, 1.25)
+texture = ExtResource("2_body")
+
+[node name="Eyes" type="Node2D" parent="."]
+
+[node name="EyesBase" type="Sprite2D" parent="Eyes"]
+scale = Vector2(1.1, 1.1)
+texture = ExtResource("3_eyes")
+
+[node name="Pupils" type="Sprite2D" parent="Eyes"]
+scale = Vector2(1.1, 1.1)
+texture = ExtResource("4_pupils")
+
+[node name="LeftGun" type="Node2D" parent="."]
+position = Vector2(10, -32)
+
+[node name="Sprite2D" type="Sprite2D" parent="LeftGun"]
+position = Vector2(16, 0)
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("5_gun")
+
+[node name="LeftMuzzle" type="Marker2D" parent="LeftGun"]
+position = Vector2(30, 0)
+
+[node name="RightGun" type="Node2D" parent="."]
+position = Vector2(10, 32)
+
+[node name="Sprite2D" type="Sprite2D" parent="RightGun"]
+position = Vector2(16, 0)
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("5_gun")
+
+[node name="RightMuzzle" type="Marker2D" parent="RightGun"]
+position = Vector2(30, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_boss")
+
+[node name="AoETelegraph" type="Node2D" parent="."]
+visible = false
+z_index = 20
+
+[node name="Circle" type="Polygon2D" parent="AoETelegraph"]
+color = Color(1, 0.1, 0.1, 0.35)

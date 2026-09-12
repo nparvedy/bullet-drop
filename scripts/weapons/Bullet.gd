@@ -4,6 +4,7 @@ class_name Projectile
 @export var speed: float = 900.0
 @export var damage: float = 120.0
 @export var is_enemy_bullet: bool = false
+@export var is_crit: bool = false
 @export var lifetime: float = 2.5
 
 var direction: Vector2 = Vector2.RIGHT
@@ -22,6 +23,9 @@ func _ready() -> void:
 			sprite.texture = preload("res://assets/sprites/weapons/bullet_enemy.png")
 		else:
 			sprite.texture = preload("res://assets/sprites/weapons/bullet_player.png")
+			if is_crit:
+				sprite.modulate = Color(1.2, 0.9, 0.2) # Effet doré critique
+				scale = Vector2(1.25, 1.25)
 
 func _setup_collision_layers() -> void:
 	if is_enemy_bullet:
@@ -47,7 +51,7 @@ func _on_body_entered(body: Node2D) -> void:
 		elif body is TileMapLayer or body is StaticBody2D:
 			_destroy()
 	else:
-		if body.has_method("take_damage") and (body.is_in_group("enemies") or body.has_node("HealthBar") or "Enemy" in body.name):
+		if body.has_method("take_damage") and (body.is_in_group("enemies") or body.has_node("HealthBar") or "Enemy" in body.name or "Boss" in body.name):
 			body.take_damage(damage)
 			_destroy()
 		elif body is TileMapLayer or body is StaticBody2D:
