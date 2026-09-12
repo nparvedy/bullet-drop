@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://b80w3kgmi0lk3"]
+[gd_scene load_steps=4 format=3 uid="uid://b80w3kgmi0lk3"]
 
 [ext_resource type="Script" path="res://scripts/weapons/AmmoDrop.gd" id="1_ammodrop"]
-[ext_resource type="Script" path="res://scripts/weapons/AmmoDropVisual.gd" id="2_visual"]
+[ext_resource type="Texture2D" path="res://assets/sprites/drops/ammo_box.png" id="2_box_tex"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ammodrop"]
 radius = 18.0
@@ -14,5 +14,6 @@ script = ExtResource("1_ammodrop")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_ammodrop")
 
-[node name="Visual" type="Node2D" parent="."]
-script = ExtResource("2_visual")
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("2_box_tex")

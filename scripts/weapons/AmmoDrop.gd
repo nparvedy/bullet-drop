@@ -7,19 +7,20 @@ var float_offset: float = 0.0
 var time_passed: float = 0.0
 var initial_pos_y: float = 0.0
 
+@onready var sprite: Sprite2D = $Sprite2D
+
 func _ready() -> void:
 	# Layer 6 (Drops = 32), Mask 2 (Player = 2)
 	collision_layer = 32
 	collision_mask = 2
 	initial_pos_y = position.y
 	body_entered.connect(_on_body_entered)
-	queue_redraw()
 
 func _process(delta: float) -> void:
 	time_passed += delta * 4.0
-	float_offset = sin(time_passed) * 3.5
-	$Visual.position.y = float_offset
-	queue_redraw()
+	float_offset = sin(time_passed) * 4.0
+	if sprite:
+		sprite.position.y = float_offset
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player") or body.name == "Player":
@@ -50,7 +51,3 @@ func _spawn_pickup_text() -> void:
 	tween.tween_property(label, "position:y", label.position.y - 25.0, 0.6)
 	tween.parallel().tween_property(label, "modulate:a", 0.0, 0.6)
 	tween.tween_callback(label.queue_free)
-
-func _draw() -> void:
-	# Anneau de lumière au sol
-	draw_arc(Vector2.ZERO, 14.0 + sin(time_passed) * 2.0, 0, TAU, 24, Color(1.0, 0.8, 0.2, 0.35), 2.0)

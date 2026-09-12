@@ -19,6 +19,10 @@ var is_invulnerable: bool = false
 var hurt_flash_timer: float = 0.0
 var look_angle: float = 0.0
 
+@onready var body_sprite: Sprite2D = $BodySprite
+@onready var eyes_container: Node2D = $Eyes
+@onready var eyes_base: Sprite2D = $Eyes/EyesBase
+@onready var pupils: Sprite2D = $Eyes/Pupils
 @onready var weapon: Weapon = $Weapon
 @onready var camera: Camera2D = $Camera2D
 
@@ -33,8 +37,6 @@ func _ready() -> void:
 	
 	if has_node("/root/EventBus"):
 		EventBus.player_health_changed.emit(current_health, max_health)
-	
-	queue_redraw()
 
 func _physics_process(delta: float) -> void:
 	# Timers de dash
@@ -76,22 +78,35 @@ func _physics_process(delta: float) -> void:
 		_start_dash()
 
 func _process(delta: float) -> void:
-	# Flash de blessure
+	# Flash de blessure / Dash modulate
 	if hurt_flash_timer > 0.0:
 		hurt_flash_timer -= delta
-		if hurt_flash_timer <= 0.0:
-			queue_redraw()
+		if body_sprite:
+			body_sprite.modulate = Color(1.0, 0.3, 0.3)
+	elif is_dashing:
+		if body_sprite:
+			body_sprite.modulate = Color(0.6, 0.9, 1.0, 0.7)
+	else:
+		if body_sprite:
+			body_sprite.modulate = Color.WHITE
 
-	# Orientation du regard vers la souris
+	# Orientation du regard vers la souris avec les sprites PNG transparents
 	var mouse_pos = get_global_mouse_position()
-	look_angle = (mouse_pos - global_position).angle()
+	var dir_to_mouse = (mouse_pos - global_position).normalized()
+	var dist_to_mouse = global_position.distance_to(mouse_pos)
+	var intensity = clamp(dist_to_mouse / 150.0, 0.0, 1.0)
+	look_angle = dir_to_mouse.angle()
+	
+	# Déplacement des yeux et des pupilles selon la souris
+	if eyes_container:
+		eyes_container.position = dir_to_mouse * (4.5 * intensity)
+	if pupils:
+		pupils.position = dir_to_mouse * (3.0 * intensity)
 	
 	# Positionnement de l'arme autour du joueur
 	if weapon:
-		var weapon_offset = Vector2.RIGHT.rotated(look_angle) * 16.0
+		var weapon_offset = dir_to_mouse * 18.0
 		weapon.position = weapon_offset
-
-	queue_redraw()
 
 func _get_movement_input() -> Vector2:
 	var move_vec = Vector2.ZERO
@@ -133,17 +148,19 @@ func _start_dash() -> void:
 		
 	if has_node("/root/EventBus"):
 		EventBus.player_dash_started.emit(dash_cooldown)
-	
-	queue_redraw()
 
 func _end_dash() -> void:
 	is_dashing = false
 	is_invulnerable = false
-	queue_redraw()
+	if body_sprite:
+		body_sprite.modulate = Color.WHITE
 
 func _spawn_dash_ghost() -> void:
-	var ghost = Node2D.new()
+	var ghost = Sprite2D.new()
+	ghost.texture = body_sprite.texture if body_sprite else null
+	ghost.scale = body_sprite.scale if body_sprite else Vector2(0.5, 0.5)
 	ghost.global_position = global_position
+	ghost.modulate = Color(0.4, 0.8, 1.0, 0.5)
 	ghost.z_index = z_index - 1
 	var ghost_script = preload("res://scripts/entities/player/DashGhost.gd")
 	ghost.set_script(ghost_script)
@@ -161,15 +178,13 @@ func take_damage(amount: float) -> void:
 	
 	if current_health <= 0:
 		_die()
-		
-	queue_redraw()
 
 func _die() -> void:
 	if has_node("/root/EventBus"):
 		EventBus.player_died.emit()
 	set_physics_process(false)
 	set_process(false)
-	# Disparition avec effet de particules / rotation
+	# Disparition avec effet de réduction d'échelle
 	var tween = create_tween()
 	tween.tween_property(self, "scale", Vector2.ZERO, 0.4)
 	tween.tween_callback(queue_free)
@@ -182,38 +197,3 @@ func get_current_ammo() -> int:
 	if weapon:
 		return weapon.current_ammo
 	return 0
-
-func _draw() -> void:
-	# Ombre portée
-	draw_circle(Vector2(0, 5), 15.0, Color(0, 0, 0, 0.25))
-
-	var body_color = Color(0.25, 0.65, 0.95) # Bleu héroïque
-	var border_color = Color(0.08, 0.28, 0.55) # Bleu foncé
-	
-	if is_dashing:
-		body_color = Color(0.5, 0.85, 1.0, 0.7)
-		border_color = Color(0.2, 0.5, 0.9, 0.8)
-	elif hurt_flash_timer > 0.0:
-		body_color = Color(1.0, 0.3, 0.3) # Flash rouge
-
-	# Corps circulaire
-	draw_circle(Vector2.ZERO, 16.0, body_color)
-	draw_arc(Vector2.ZERO, 16.0, 0, TAU, 36, border_color, 2.5, true)
-
-	# Yeux orientés vers la souris
-	var look_dir = Vector2.RIGHT.rotated(look_angle)
-	var eye_offset = look_dir * 5.0
-	var eye_perp = Vector2(-look_dir.y, look_dir.x) * 4.5
-	
-	var left_eye = eye_offset + eye_perp
-	var right_eye = eye_offset - eye_perp
-	
-	# Fond des yeux
-	draw_circle(left_eye, 3.2, Color.WHITE)
-	draw_circle(right_eye, 3.2, Color.WHITE)
-	
-	# Pupilles
-	var pupil_left = left_eye + look_dir * 1.2
-	var pupil_right = right_eye + look_dir * 1.2
-	draw_circle(pupil_left, 1.8, Color(0.1, 0.1, 0.2))
-	draw_circle(pupil_right, 1.8, Color(0.1, 0.1, 0.2))

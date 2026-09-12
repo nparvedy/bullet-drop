@@ -9,12 +9,19 @@ class_name Projectile
 var direction: Vector2 = Vector2.RIGHT
 var current_lifetime: float = 0.0
 
+@onready var sprite: Sprite2D = $Sprite2D
+
 func _ready() -> void:
 	top_level = true
 	body_entered.connect(_on_body_entered)
 	area_entered.connect(_on_area_entered)
 	_setup_collision_layers()
-	queue_redraw()
+	
+	if sprite:
+		if is_enemy_bullet:
+			sprite.texture = preload("res://assets/sprites/weapons/bullet_enemy.png")
+		else:
+			sprite.texture = preload("res://assets/sprites/weapons/bullet_player.png")
 
 func _setup_collision_layers() -> void:
 	if is_enemy_bullet:
@@ -55,17 +62,4 @@ func _on_area_entered(area: Area2D) -> void:
 		_destroy()
 
 func _destroy() -> void:
-	# Petite disparition propre
 	queue_free()
-
-func _draw() -> void:
-	if is_enemy_bullet:
-		# Projectile ennemi (rouge vif / orange néon)
-		draw_circle(Vector2.ZERO, 6.0, Color(1.0, 0.15, 0.1, 0.4))
-		draw_circle(Vector2.ZERO, 4.5, Color(1.0, 0.25, 0.1, 0.9))
-		draw_circle(Vector2.ZERO, 2.5, Color(1.0, 0.85, 0.4, 1.0))
-	else:
-		# Projectile joueur (jaune électrique / blanc éclatant)
-		draw_circle(Vector2.ZERO, 6.0, Color(1.0, 0.85, 0.2, 0.4))
-		draw_circle(Vector2.ZERO, 4.0, Color(1.0, 0.8, 0.1, 0.9))
-		draw_circle(Vector2.ZERO, 2.0, Color(1.0, 1.0, 1.0, 1.0))

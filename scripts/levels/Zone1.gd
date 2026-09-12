@@ -5,20 +5,22 @@ class_name Zone1
 @export var enemy_scene: PackedScene
 @export var ammo_drop_scene: PackedScene
 
-var enemies_alive: int = 5
+var enemies_alive: int = 7
 var total_kills: int = 0
 var emergency_drop_timer: float = 0.0
 var next_emergency_drop_delay: float = 0.0
 var player_has_zero_ammo: bool = false
 var player_ref: Player = null
 
-# Positions prédéfinies d'apparition dans l'arène
+# Points d'apparition stratégiques répartis dans toutes les salles
 var spawn_points: Array[Vector2] = [
-	Vector2(450, 280),   # Haut-Gauche
-	Vector2(1470, 280),  # Haut-Droite
-	Vector2(450, 780),   # Bas-Gauche
-	Vector2(1470, 780),  # Bas-Droite
-	Vector2(960, 200)    # Haut-Centre
+	Vector2(450, 750),   # Salle Ouest (Entrepôt)
+	Vector2(2350, 750),  # Salle Est (Labo)
+	Vector2(1200, 650),  # Grand Hall Ouest
+	Vector2(1600, 650),  # Grand Hall Est
+	Vector2(1400, 200),  # Salle Nord (Haut-Centre)
+	Vector2(900, 300),   # Salle Nord (Haut-Gauche)
+	Vector2(1900, 300)   # Salle Nord (Haut-Droite)
 ]
 
 @onready var enemies_container: Node2D = $Entities/Enemies
@@ -74,10 +76,15 @@ func _spawn_emergency_ammo_drop() -> void:
 	var drop = ammo_drop_scene.instantiate()
 	drop.ammo_amount = 5
 	
-	# Position aléatoire dans l'arène (autour de la zone jouable)
-	var rand_x = randf_range(400.0, 1500.0)
-	var rand_y = randf_range(250.0, 850.0)
-	drop.global_position = Vector2(rand_x, rand_y)
+	# Position aléatoire dans l'une des salles explorables
+	var drop_rooms = [
+		Vector2(randf_range(300, 750), randf_range(650, 1050)),    # Salle Ouest
+		Vector2(randf_range(1100, 1700), randf_range(650, 1050)),  # Grand Hall
+		Vector2(randf_range(2050, 2550), randf_range(650, 1050)),  # Salle Est
+		Vector2(randf_range(600, 2200), randf_range(250, 420)),    # Salle Nord
+		Vector2(randf_range(1200, 1600), randf_range(1300, 1550))  # Salle Sud
+	]
+	drop.global_position = drop_rooms.pick_random()
 	
 	if drops_container:
 		drops_container.add_child(drop)
@@ -94,7 +101,7 @@ func _on_enemy_died(_enemy: Node2D, _pos: Vector2) -> void:
 	if has_node("/root/EventBus"):
 		EventBus.zone_enemies_updated.emit(enemies_alive, total_kills)
 		
-	# Respawn infini du monstre après 5 secondes
+	# Respawn du monstre après 5 secondes
 	get_tree().create_timer(respawn_delay).timeout.connect(_respawn_single_enemy)
 
 func _respawn_single_enemy() -> void:
@@ -103,15 +110,15 @@ func _respawn_single_enemy() -> void:
 		
 	var new_enemy = enemy_scene.instantiate()
 	
-	# Choix d'un point d'apparition parmi les points prédéfinis
+	# Choix d'un point d'apparition parmi les salles
 	var spawn_pos = spawn_points.pick_random()
 	new_enemy.global_position = spawn_pos
 	
-	# Configuration aléatoire du monstre (100 à 200 HP, 50% de chance d'être tireur)
+	# Configuration aléatoire du monstre (100 à 200 HP, 60% tireur / 40% chasseur)
 	var hp = round(randf_range(100.0, 200.0))
 	new_enemy.max_health = hp
 	new_enemy.current_health = hp
-	new_enemy.can_shoot = (randf() > 0.4) # ~60% tireurs, 40% chasseurs
+	new_enemy.can_shoot = (randf() > 0.4)
 	
 	if enemies_container:
 		enemies_container.add_child(new_enemy)
