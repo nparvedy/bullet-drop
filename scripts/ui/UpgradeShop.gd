@@ -84,7 +84,7 @@ func _highlight_tab(btn: Button, active: bool) -> void:
 		btn.modulate = Color(0.8, 0.8, 0.8)
 
 func _create_item_row(upgrade_id: String, cfg: Dictionary) -> void:
-	var save_mgr = get_node_or_null("/root/SaveManager")
+	var save_mgr = get_node_or_null("/root/SaveManager") if is_inside_tree() else null
 	if not save_mgr:
 		return
 	var cur_lvl = save_mgr.upgrades.get(upgrade_id, 0)
@@ -106,7 +106,7 @@ func _create_item_row(upgrade_id: String, cfg: Dictionary) -> void:
 	row.add_theme_stylebox_override("panel", row_style)
 	
 	var hbox = HBoxContainer.new()
-	hbox.theme_override_constants.separation = 16
+	hbox.add_theme_constant_override("separation", 16)
 	row.add_child(hbox)
 	
 	var vbox_info = VBoxContainer.new()
@@ -150,7 +150,8 @@ func _create_item_row(upgrade_id: String, cfg: Dictionary) -> void:
 	items_container.add_child(row)
 
 func _on_restart_pressed() -> void:
-	var sm = get_node_or_null("/root/SaveManager")
+	var sm = get_node_or_null("/root/SaveManager") if is_inside_tree() else null
 	if sm:
 		sm.reset_run_points()
-	get_tree().reload_current_scene()
+	if is_inside_tree() and get_tree():
+		get_tree().reload_current_scene()
