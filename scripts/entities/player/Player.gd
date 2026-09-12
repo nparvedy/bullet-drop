@@ -84,7 +84,20 @@ func _load_permanent_upgrades() -> void:
 	var mag_lvl = save_mgr.upgrades.get("magnet_radius", 0)
 	magnet_radius += mag_lvl * (120.0 * 0.35)
 
+var is_frozen: bool = false
+
+func set_frozen(frozen: bool) -> void:
+	is_frozen = frozen
+	if frozen:
+		velocity = Vector2.ZERO
+		is_dashing = false
+
 func _physics_process(delta: float) -> void:
+	if is_frozen:
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
+
 	# Régénération passive des points de vie
 	if current_health < max_health and current_health > 0:
 		current_health = min(max_health, current_health + hp_regen * delta)

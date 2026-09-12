@@ -99,6 +99,10 @@ func _unhandled_input(event: InputEvent) -> void:
 func try_shoot() -> bool:
 	if not can_shoot:
 		return false
+		
+	var player_owner = get_parent() as Player
+	if player_owner and player_owner.is_frozen:
+		return false
 	
 	if current_ammo <= 0:
 		_play_empty_click()

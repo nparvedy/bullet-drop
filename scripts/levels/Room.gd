@@ -26,6 +26,7 @@ enum SpawnMode {
 
 var is_active: bool = false
 var is_cleared: bool = false
+var is_starting_sequence: bool = false
 var enemies_spawned: int = 0
 var enemies_defeated: int = 0
 var current_wave: int = 0
@@ -46,62 +47,22 @@ func _ready() -> void:
 	if bounds_area:
 		bounds_area.body_entered.connect(_on_bounds_body_entered)
 		
-	# La porte de sortie de la salle commence fermée (verrouillée jusqu'au nettoyage)
+	# La porte de sortie commence fermée
 	if exit_door:
 		exit_door.set_closed(true)
 		
-	# S'assurer que le brouillard masque la salle initialement si ce n'est pas la première
+	# Brouillard initial
 	if fog_overlay:
 		fog_overlay.visible = true
 		if room_index == 1:
-			fog_overlay.modulate.a = 0.0 # Salle 1 découverte immédiatement
-
-func _on_bounds_body_entered(body: Node2D) -> void:
-	if is_active or is_cleared:
-		return
-	if body.is_in_group("player") or body.name == "Player":
-		activate_room()
-
-func activate_room() -> void:
-	if is_active or is_cleared:
-		return
-	is_active = true
-	
-	# Fermer et verrouiller définitivement la porte d'entrée
-	if entry_door:
-		entry_door.lock_permanently()
-		
-	# Dissiper le brouillard de guerre avec un fondu fluide
-	if fog_overlay:
-		var tween = create_tween()
-		tween.tween_property(fog_overlay, "modulate:a", 0.0, 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		tween.tween_callback(func(): fog_overlay.visible = false)
-		
-	# Notifier l'interface
-	var bus = get_node_or_null("/root/EventBus") if is_inside_tree() else null
-	if bus:
-		bus.room_entered.emit(room_index, 5, room_name)
-		bus.room_enemies_updated.emit(total_enemies, total_enemies)
-		
-	# Démarrer le spawn
-	_start_spawning()
-
-func _start_spawning() -> void:
-	match spawn_mode:
-		SpawnMode.ALL_AT_ONCE:
-			for i in range(total_enemies):
-				_spawn_enemy()
-		SpawnMode.WAVES:
-			current_wave = 1
-			var count_in_wave = total_enemies / wave_count
-			for i in range(count_in_wave):
-				_spawn_enemy()
-		SpawnMode.PROGRESSIVE:
-			_spawn_enemy() # Premier monstre immédiat
-		SpawnMode.BOSS:
-			_spawn_boss()
+			fog_overlay.modulate.a = 0.0
 
 func _process(delta: float) -> void:
+	# Si la salle n'est pas encore activée et qu'un joueur est présent, vérifier s'il est bien entré
+	if not is_active and not is_cleared and not is_starting_sequence and room_index > 1:
+		_check_player_entry()
+		return
+		
 	if not is_active or is_cleared:
 		return
 		
@@ -110,9 +71,124 @@ func _process(delta: float) -> void:
 			progressive_timer += delta
 			if progressive_timer >= progressive_interval:
 				progressive_timer = 0.0
-				_spawn_enemy()
+				_spawn_enemy(true)
 
-func _spawn_enemy() -> void:
+func _on_bounds_body_entered(body: Node2D) -> void:
+	if is_active or is_cleared or is_starting_sequence:
+		return
+	if body.is_in_group("player") or body.name == "Player":
+		_check_player_entry()
+
+func _find_player_node() -> Node2D:
+	if is_inside_tree() and get_tree():
+		var p = get_tree().get_first_node_in_group("player")
+		if p and is_instance_valid(p):
+			return p
+	var cur = get_parent()
+	while cur:
+		if cur.has_node("Player"):
+			return cur.get_node("Player")
+		cur = cur.get_parent()
+	return null
+
+func _check_player_entry() -> void:
+	if is_active or is_cleared or is_starting_sequence:
+		return
+		
+	var player = _find_player_node()
+	if not player or not is_instance_valid(player):
+		return
+		
+	# Pour les salles 2+, s'assurer que le joueur a bien franchi la porte d'entrée (+80px à l'intérieur)
+	if entry_door:
+		var entry_threshold_x = entry_door.global_position.x + 80.0
+		if player.global_position.x < entry_threshold_x:
+			return # Le joueur n'est pas encore assez avancé dans la salle suivante
+			
+	activate_room()
+
+func activate_room() -> void:
+	if is_active or is_cleared:
+		return
+	is_starting_sequence = true
+	is_active = true
+	
+	var player = _find_player_node()
+	if player and is_instance_valid(player):
+		if player.has_method("set_frozen"):
+			player.set_frozen(true)
+		# Nudge de sécurité vers l'intérieur si nécessaire
+		if entry_door and player.global_position.x < entry_door.global_position.x + 120.0:
+			var pt = player.create_tween()
+			if pt:
+				pt.tween_property(player, "global_position:x", entry_door.global_position.x + 140.0, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+				
+	# Dissipation du brouillard
+	if fog_overlay:
+		var tween = create_tween()
+		if tween:
+			tween.tween_property(fog_overlay, "modulate:a", 0.0, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			tween.tween_callback(func(): fog_overlay.visible = false)
+		else:
+			fog_overlay.visible = false
+			
+	# Interface
+	var bus = get_node_or_null("/root/EventBus") if is_inside_tree() else null
+	if bus:
+		bus.room_entered.emit(room_index, 5, room_name)
+		bus.room_enemies_updated.emit(total_enemies, total_enemies)
+		
+	# Fermeture animée de la porte d'entrée
+	if entry_door:
+		entry_door.close_with_animation(func():
+			if player and is_instance_valid(player) and player.has_method("set_frozen"):
+				player.set_frozen(false)
+			is_starting_sequence = false
+			_start_spawning()
+		)
+	else:
+		# Salle 1 : déblocage immédiat et spawn
+		if player and is_instance_valid(player) and player.has_method("set_frozen"):
+			player.set_frozen(false)
+		is_starting_sequence = false
+		var t = get_tree().create_timer(0.3) if is_inside_tree() else null
+		if t:
+			t.timeout.connect(_start_spawning)
+		else:
+			_start_spawning()
+
+func _start_spawning() -> void:
+	match spawn_mode:
+		SpawnMode.ALL_AT_ONCE:
+			for i in range(total_enemies):
+				var delay = i * 0.22
+				if delay > 0.0 and is_inside_tree():
+					var t = get_tree().create_timer(delay)
+					t.timeout.connect(func():
+						if is_active and not is_cleared:
+							_spawn_enemy(true)
+					)
+				else:
+					_spawn_enemy(true)
+		SpawnMode.WAVES:
+			current_wave = 1
+			var count_in_wave = total_enemies / wave_count
+			for i in range(count_in_wave):
+				var delay = i * 0.22
+				if delay > 0.0 and is_inside_tree():
+					var t = get_tree().create_timer(delay)
+					t.timeout.connect(func():
+						if is_active and not is_cleared:
+							_spawn_enemy(true)
+					)
+				else:
+					_spawn_enemy(true)
+		SpawnMode.PROGRESSIVE:
+			_spawn_enemy(true) # Premier monstre
+		SpawnMode.BOSS:
+			_spawn_boss(true)
+
+func _spawn_enemy(with_anim: bool = true) -> void:
 	if not enemy_scene:
 		enemy_scene = load("res://scenes/entities/enemies/Enemy.tscn")
 	if not enemy_scene:
@@ -138,6 +214,18 @@ func _spawn_enemy() -> void:
 		
 	enemy.global_position = spawn_pos
 	
+	if with_anim:
+		enemy.scale = Vector2.ZERO
+		enemy.modulate = Color(2.5, 2.5, 2.5)
+		var st = enemy.create_tween()
+		if st:
+			st.set_parallel(true)
+			st.tween_property(enemy, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			st.tween_property(enemy, "modulate", Color.WHITE, 0.35)
+		else:
+			enemy.scale = Vector2.ONE
+			enemy.modulate = Color.WHITE
+			
 	# Chance d'être tireur augmente avec les salles (R1: 30%, R2: 50%, R3: 65%, R4: 80%)
 	var shooter_chance = 0.2 + (room_index * 0.15)
 	enemy.can_shoot = (randf() <= shooter_chance)
@@ -151,7 +239,7 @@ func _spawn_enemy() -> void:
 	else:
 		enemy.tree_exited.connect(func(): _on_enemy_died(enemy))
 
-func _spawn_boss() -> void:
+func _spawn_boss(with_anim: bool = true) -> void:
 	if not boss_scene:
 		boss_scene = load("res://scenes/entities/enemies/BossEnemy.tscn")
 	if not boss_scene:
@@ -172,6 +260,18 @@ func _spawn_boss() -> void:
 	boss.level = 5
 	boss.zone_number = 1
 	
+	if with_anim:
+		boss.scale = Vector2.ZERO
+		boss.modulate = Color(2.5, 2.5, 2.5)
+		var bt = boss.create_tween()
+		if bt:
+			bt.set_parallel(true)
+			bt.tween_property(boss, "scale", Vector2.ONE, 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			bt.tween_property(boss, "modulate", Color.WHITE, 0.5)
+		else:
+			boss.scale = Vector2.ONE
+			boss.modulate = Color.WHITE
+			
 	active_enemies.append(boss)
 	enemies_spawned += 1
 	if boss.has_signal("died"):
@@ -196,8 +296,16 @@ func _on_enemy_died(enemy: Node2D) -> void:
 		if active_enemies.size() == 0 and enemies_spawned < total_enemies:
 			current_wave += 1
 			for i in range(wave_size):
-				if enemies_spawned < total_enemies:
-					_spawn_enemy()
+				var delay = i * 0.22
+				if delay > 0.0 and is_inside_tree():
+					var t = get_tree().create_timer(delay)
+					t.timeout.connect(func():
+						if is_active and not is_cleared and enemies_spawned < total_enemies:
+							_spawn_enemy(true)
+					)
+				else:
+					if enemies_spawned < total_enemies:
+						_spawn_enemy(true)
 					
 	# Vérification de la complétion de la salle
 	if enemies_defeated >= total_enemies:
@@ -218,3 +326,4 @@ func _complete_room() -> void:
 	var bus = get_node_or_null("/root/EventBus") if is_inside_tree() else null
 	if bus:
 		bus.room_cleared.emit(room_index)
+

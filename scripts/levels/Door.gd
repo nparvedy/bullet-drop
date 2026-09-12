@@ -63,9 +63,45 @@ func lock_permanently() -> void:
 	is_permanent_lock = true
 	set_closed(true)
 	if visual_rect:
-		visual_rect.color = Color(0.8, 0.1, 0.1, 0.95)
+		visual_rect.color = Color(0.9, 0.15, 0.15, 0.95)
+
+func close_with_animation(on_closed_callback: Callable = Callable()) -> void:
+	is_permanent_lock = true
+	is_closed = true
+	
+	if visual_rect:
+		visual_rect.visible = true
+		visual_rect.color = Color(0.2, 0.95, 0.4, 0.6)
+		visual_rect.modulate.a = 1.0
+		
+		# Animation de fermeture : effet d'extension de grille énergétique + flash rouge
+		var tween = create_tween()
+		if tween:
+			if orientation == "vertical":
+				visual_rect.scale = Vector2(1.0, 0.0)
+				visual_rect.pivot_offset = Vector2(16.0, width / 2.0)
+				tween.tween_property(visual_rect, "scale:y", 1.0, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			else:
+				visual_rect.scale = Vector2(0.0, 1.0)
+				visual_rect.pivot_offset = Vector2(width / 2.0, 16.0)
+				tween.tween_property(visual_rect, "scale:x", 1.0, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+				
+			tween.tween_property(visual_rect, "color", Color(2.5, 2.5, 2.5), 0.1) # Flash lumineux
+			tween.tween_property(visual_rect, "color", Color(0.9, 0.15, 0.15, 0.95), 0.15) # Rouge alerte verrouillé
+			
+			tween.tween_callback(func():
+				if collision_shape:
+					collision_shape.set_deferred("disabled", false)
+				if on_closed_callback.is_valid():
+					on_closed_callback.call()
+			)
+			return
+
+	if collision_shape:
+		collision_shape.set_deferred("disabled", false)
+	if on_closed_callback.is_valid():
+		on_closed_callback.call()
 
 func _on_trigger_body_entered(body: Node2D) -> void:
-	if body.is_in_group("player") or body.name == "Player":
-		# Quand le joueur passe la porte, celle-ci se verrouille définitivement
-		lock_permanently()
+	# Géré directement par Room.gd lors de l'entrée dans la salle suivante
+	pass
