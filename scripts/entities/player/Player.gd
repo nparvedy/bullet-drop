@@ -53,6 +53,16 @@ func _ready() -> void:
 	_emit_health_updated()
 	_emit_dash_updated()
 
+	if weapon: 
+		weapon.bullet_fired.connect(_on_weapon_bullet_fired)
+
+func _on_weapon_bullet_fired(bullet: Bullet) -> void:
+	# Le joueur transmet la balle au monde (au parent du joueur, ex: Zone1)
+	if get_parent():
+		get_parent().add_child(bullet)
+	else:
+		add_child(bullet)
+
 func _load_permanent_upgrades() -> void:
 	if not is_inside_tree():
 		return
@@ -88,6 +98,8 @@ var is_frozen: bool = false
 
 func set_frozen(frozen: bool) -> void:
 	is_frozen = frozen
+	if weapon:
+		weapon.is_active = not frozen
 	if frozen:
 		velocity = Vector2.ZERO
 		is_dashing = false
@@ -213,7 +225,8 @@ func _spawn_dash_ghost() -> void:
 	ghost.z_index = z_index - 1
 	var ghost_script = preload("res://scripts/entities/player/DashGhost.gd")
 	ghost.set_script(ghost_script)
-	get_parent().add_child(ghost)
+	if get_parent():
+		get_parent().add_child(ghost)
 
 func take_damage(amount: float) -> void:
 	if is_invulnerable or is_dashing:

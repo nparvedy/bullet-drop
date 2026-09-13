@@ -1,6 +1,8 @@
 extends Node2D
 class_name Weapon
 
+signal bullet_fired(bullet: Bullet)
+
 @export var bullet_scene: PackedScene
 @export var weapon_name: String = "Pistolet de Survie"
 @export var base_damage: float = 120.0
@@ -13,6 +15,7 @@ class_name Weapon
 var can_shoot: bool = true
 var fire_cooldown_timer: float = 0.0
 var recoil_offset: float = 0.0
+var is_active: bool = true
 
 # Modificateurs de statistiques
 var damage_multiplier: float = 1.0
@@ -97,11 +100,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		try_shoot()
 
 func try_shoot() -> bool:
-	if not can_shoot:
-		return false
-		
-	var player_owner = get_parent() as Player
-	if player_owner and player_owner.is_frozen:
+	if not is_active or not can_shoot:
 		return false
 	
 	if current_ammo <= 0:
@@ -127,7 +126,7 @@ func _spawn_bullet() -> void:
 	if not bullet_scene:
 		return
 	
-	var bullet_inst = bullet_scene.instantiate()
+	var bullet_inst = bullet_scene.instantiate() as Bullet
 	
 	# Calcul du critique
 	var is_crit = (randf() < crit_chance)
@@ -142,12 +141,8 @@ func _spawn_bullet() -> void:
 	bullet_inst.global_position = spawn_pos
 	bullet_inst.direction = Vector2.RIGHT.rotated(rotation)
 	bullet_inst.rotation = rotation
-	
-	var level_root = get_tree().current_scene
-	if level_root:
-		level_root.add_child(bullet_inst)
-	else:
-		get_parent().add_child(bullet_inst)
+	# Règle d'or : Signal Up ! On émet vers le Player
+	bullet_fired.emit(bullet_inst)
 
 func _play_empty_click() -> void:
 	recoil_offset = 2.0

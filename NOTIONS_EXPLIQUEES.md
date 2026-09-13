@@ -18,6 +18,7 @@
 | **2026-09-13** | **Autoloads (Singletons)** | Architecture Globale | Scripts ou scènes chargés automatiquement à la racine de la scène (`/root/`). Analogie : Stores globaux (Pinia/Redux) ou services partagés. Doit être réservé à l'EventBus global et aux données persistantes (SaveManager). |
 | **2026-09-13** | **Viewport, Stretch Mode & Input Coordinate Space** | Rendu & UI / Input | Conversion entre les coordonnées physiques d'écran (Window) et logiques (Viewport). Un décalage de clic apparaît quand le ratio ou l'offset de rendu diffère de l'espace d'input (ex: barre de debug in-game Godot 4.3+, zoom DPI Windows, Stretch `expand`). Analogie web : décalage entre `canvas.width` (buffer) et `style.width` (CSS), faussant `event.offsetX/Y`. |
 | **2026-09-13** | **Spawning Découplé & Injection de Dépendances** | Architecture & Communication | Les entités (Arme, Ennemi) ne doivent pas injecter directement leurs balles/drops dans `current_scene` ou `get_parent()`. Elles délèguent l'instanciation via des Signaux ou un Spawner centralisé. Cela garantit l'indépendance des scènes et évite les crashs lors des tests isolés (F6). |
+| **2026-09-14** | **`class_name` & Typage Global Statique** | GDScript & Typage | Déclarer `class_name MonType` en tête d'un script l'enregistre comme type global dans tout le projet Godot (analogie : `export interface/class` global TypeScript). Si le nom diffère ou si un fichier parent a une erreur de compilation, les types dérivés et membres (`signals`, `props`) ne peuvent pas être résolus (erreurs en cascade). |
 
 ---
 
