@@ -83,12 +83,7 @@ func _find_player_node() -> Node2D:
 	if is_inside_tree() and get_tree():
 		var p = get_tree().get_first_node_in_group("player")
 		if p and is_instance_valid(p):
-			return p
-	var cur = get_parent()
-	while cur:
-		if cur.has_node("Player"):
-			return cur.get_node("Player")
-		cur = cur.get_parent()
+			return p as Node2D
 	return null
 
 func _check_player_entry() -> void:

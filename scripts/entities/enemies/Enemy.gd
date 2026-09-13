@@ -189,17 +189,14 @@ func _shoot_at_player(dir: Vector2) -> void:
 	bullet.rotation = dir.angle()
 	bullet.global_position = global_position + dir * 20.0
 	
-	var level_root = get_tree().current_scene
-	if level_root:
-		level_root.add_child(bullet)
-	else:
+	# Ajout au parent direct (la Room ou le Niveau)
+	if get_parent():
 		get_parent().add_child(bullet)
 
 func _find_player() -> void:
 	if not target_player or not is_instance_valid(target_player):
-		var players = get_tree().get_nodes_in_group("player")
-		if not players.is_empty():
-			target_player = players[0]
+		if is_inside_tree() and get_tree():
+			target_player = get_tree().get_first_node_in_group("player") as Node2D
 
 func take_damage(amount: float) -> void:
 	current_health = max(0.0, current_health - amount)
@@ -265,12 +262,8 @@ func _die() -> void:
 		queue_free()
 
 func _spawn_drops() -> void:
-	var level_root = null
-	if is_inside_tree() and get_tree():
-		level_root = get_tree().current_scene
-	if not level_root and get_parent():
-		level_root = get_parent()
-	if not level_root:
+	var target_container = get_parent()
+	if not target_container:
 		return
 	
 	# Drop de munitions
@@ -278,9 +271,9 @@ func _spawn_drops() -> void:
 		var drop = ammo_drop_scene.instantiate()
 		drop.global_position = global_position
 		drop.ammo_amount = 5
-		level_root.call_deferred("add_child", drop)
+		target_container.call_deferred("add_child", drop)
 	
-	# 20% de chance de faire tomber un bonus
+	# Drop de bonus
 	var bonus_chance = 0.20
 	var sm = get_node_or_null("/root/SaveManager") if is_inside_tree() else null
 	if sm:
@@ -290,4 +283,4 @@ func _spawn_drops() -> void:
 	if randf() <= bonus_chance and bonus_drop_scene:
 		var bonus = bonus_drop_scene.instantiate()
 		bonus.global_position = global_position + Vector2(randf_range(-15, 15), randf_range(-15, 15))
-		level_root.call_deferred("add_child", bonus)
+		target_container.call_deferred("add_child", bonus)
