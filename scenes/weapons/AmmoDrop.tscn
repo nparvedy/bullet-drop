@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://b80w3kgmi0lk3"]
+[gd_scene format=3 uid="uid://b80w3kgmi0lk3"]
 
 [ext_resource type="Script" path="res://scripts/weapons/AmmoDrop.gd" id="1_ammodrop"]
 [ext_resource type="Texture2D" path="res://assets/sprites/drops/ammo_box.png" id="2_box_tex"]

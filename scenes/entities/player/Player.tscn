@@ -1,39 +1,40 @@
-[gd_scene load_steps=7 format=3 uid="uid://cfpo0lh1je03y"]
+[gd_scene format=3 uid="uid://cfpo0lh1je03y"]
 
-[ext_resource type="Script" path="res://scripts/entities/player/Player.gd" id="1_player"]
-[ext_resource type="Texture2D" path="res://assets/sprites/player/player_body.png" id="2_body"]
-[ext_resource type="Texture2D" path="res://assets/sprites/player/player_eyes.png" id="3_eyes"]
-[ext_resource type="Texture2D" path="res://assets/sprites/player/player_pupils.png" id="4_pupils"]
-[ext_resource type="PackedScene" path="res://scenes/weapons/Weapon.tscn" id="5_weapon"]
+[ext_resource type="Script" uid="uid://y7x06rm8jaye" path="res://scripts/entities/player/Player.gd" id="1_player"]
+[ext_resource type="Texture2D" uid="uid://cypnskwph5th3" path="res://assets/sprites/player/player_body.png" id="2_body"]
+[ext_resource type="Texture2D" uid="uid://c62kk0wx1qkja" path="res://assets/sprites/player/player_eyes.png" id="3_eyes"]
+[ext_resource type="Texture2D" uid="uid://cmnfi4uowq0w8" path="res://assets/sprites/player/player_pupils.png" id="4_pupils"]
+[ext_resource type="PackedScene" uid="uid://bhvo4dnje0alg" path="res://scenes/weapons/Weapon.tscn" id="5_weapon"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_player"]
 radius = 16.0
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" unique_id=841913981]
 collision_layer = 2
 collision_mask = 5
 script = ExtResource("1_player")
 
-[node name="BodySprite" type="Sprite2D" parent="."]
+[node name="BodySprite" type="Sprite2D" parent="." unique_id=1955327346]
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_body")
 
-[node name="Eyes" type="Node2D" parent="."]
+[node name="Eyes" type="Node2D" parent="." unique_id=1119101735]
 
-[node name="EyesBase" type="Sprite2D" parent="Eyes"]
+[node name="EyesBase" type="Sprite2D" parent="Eyes" unique_id=1111545320]
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_eyes")
 
-[node name="Pupils" type="Sprite2D" parent="Eyes"]
+[node name="Pupils" type="Sprite2D" parent="Eyes" unique_id=938704292]
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_pupils")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1664477629]
 shape = SubResource("CircleShape2D_player")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1609394178]
 process_callback = 0
 position_smoothing_enabled = true
 position_smoothing_speed = 8.0
 
-[node name="Weapon" parent="." instance=ExtResource("5_weapon")]
+[node name="Weapon" parent="." unique_id=1582432462 instance=ExtResource("5_weapon")]
+position = Vector2(23, 0)

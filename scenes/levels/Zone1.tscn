@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://bl5yjsvqwiiqs"]
+[gd_scene format=3 uid="uid://bl5yjsvqwiiqs"]
 
 [ext_resource type="Script" path="res://scripts/levels/Zone1.gd" id="1_zone1_script"]
 [ext_resource type="Texture2D" path="res://assets/sprites/environment/floor_tile.png" id="2_floor_tile"]
