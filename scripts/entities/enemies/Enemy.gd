@@ -256,7 +256,8 @@ func _die() -> void:
 	if sm:
 		sm.add_run_points(pts)
 		
-	_spawn_drops()
+	var death_pos = global_position
+	_spawn_drops.call_deferred(death_pos)
 	
 	var bus = get_node_or_null("/root/EventBus") if is_inside_tree() else null
 	if bus:
@@ -272,19 +273,16 @@ func _die() -> void:
 	else:
 		queue_free()
 
-func _spawn_drops() -> void:
+func _spawn_drops(death_pos: Vector2) -> void:
 	var target_container = get_parent()
 	if not target_container:
 		return
 	
-	# Mémorisation précise de la position globale de mort
-	var death_pos = global_position
-	
-	# Drop de munitions
+	# 1. Drop de munitions
 	if ammo_drop_scene:
 		var drop = ammo_drop_scene.instantiate()
-		target_container.add_child(drop) # 👈 add_child en premier
-		drop.global_position = death_pos # 👈 global_position en second
+		target_container.add_child(drop)
+		drop.global_position = death_pos
 		drop.ammo_amount = 5
 	
 	# 2. Drop de bonus (20% de base + upgrades)
@@ -296,5 +294,5 @@ func _spawn_drops() -> void:
 		
 	if randf() <= bonus_chance and bonus_drop_scene:
 		var bonus = bonus_drop_scene.instantiate()
-		target_container.add_child(bonus) # 👈 add_child en premier
+		target_container.add_child(bonus)
 		bonus.global_position = death_pos + Vector2(randf_range(-15, 15), randf_range(-15, 15))

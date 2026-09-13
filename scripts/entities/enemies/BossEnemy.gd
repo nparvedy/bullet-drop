@@ -259,7 +259,8 @@ func _die() -> void:
 	if save_mgr:
 		save_mgr.add_run_points(25)
 		
-	_spawn_victory_drops()
+	var boss_pos = global_position
+	_spawn_victory_drops.call_deferred(boss_pos) # 👈 call_deferred ici aussi
 	
 	var eb = get_node_or_null("/root/EventBus") if is_inside_tree() else null
 	if eb:
@@ -276,23 +277,19 @@ func _die() -> void:
 	else:
 		queue_free()
 
-func _spawn_victory_drops() -> void:
-	var level_root = null
-	if is_inside_tree() and get_tree():
-		level_root = get_tree().current_scene
-	if not level_root and get_parent():
-		level_root = get_parent()
-	if not level_root:
+func _spawn_victory_drops(boss_pos: Vector2) -> void:
+	var target_container = get_parent()
+	if not target_container:
 		return
 		
 	for i in range(3):
 		if bonus_drop_scene:
 			var b = bonus_drop_scene.instantiate()
-			b.global_position = global_position + Vector2(randf_range(-40, 40), randf_range(-40, 40))
-			level_root.call_deferred("add_child", b)
+			target_container.add_child(b)
+			b.global_position = boss_pos + Vector2(randf_range(-40, 40), randf_range(-40, 40))
 	for i in range(2):
 		if ammo_drop_scene:
 			var a = ammo_drop_scene.instantiate()
-			a.global_position = global_position + Vector2(randf_range(-30, 30), randf_range(-30, 30))
+			target_container.add_child(a)
+			a.global_position = boss_pos + Vector2(randf_range(-30, 30), randf_range(-30, 30))
 			a.ammo_amount = 20
-			level_root.call_deferred("add_child", a)

@@ -102,6 +102,6 @@ func close_with_animation(on_closed_callback: Callable = Callable()) -> void:
 	if on_closed_callback.is_valid():
 		on_closed_callback.call()
 
-func _on_trigger_body_entered(body: Node2D) -> void:
+func _on_trigger_body_entered(_body: Node2D) -> void:
 	# Géré directement par Room.gd lors de l'entrée dans la salle suivante
 	pass
