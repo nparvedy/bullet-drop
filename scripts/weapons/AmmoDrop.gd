@@ -11,6 +11,7 @@ var initial_pos_y: float = 0.0
 
 func _ready() -> void:
 	# Layer 6 (Drops = 32), Mask 2 (Player = 2)
+	top_level = true
 	collision_layer = 32
 	collision_mask = 2
 	initial_pos_y = position.y

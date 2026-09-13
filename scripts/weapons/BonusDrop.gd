@@ -30,6 +30,7 @@ var is_collected: bool = false
 @onready var background_rect: ColorRect = $Visual/Background
 
 func _ready() -> void:
+	top_level = true
 	base_y = position.y
 	# Choix aléatoire du type si non forcé
 	if bonus_type == BonusType.DAMAGE and randf() < 0.85: # Default initialization

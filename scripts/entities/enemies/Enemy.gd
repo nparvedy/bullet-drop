@@ -11,7 +11,12 @@ signal died(enemy)
 @export var damage: float = 30.0
 
 @export_group("Capacités de Combat")
-@export var can_shoot: bool = false
+@export var can_shoot: bool = false:
+	set(value):
+		can_shoot = value
+		if is_node_ready():
+			_update_appearance()
+
 @export var shoot_interval: float = 1.0
 @export var bullet_scene: PackedScene
 @export var ammo_drop_scene: PackedScene
@@ -187,11 +192,17 @@ func _shoot_at_player(dir: Vector2) -> void:
 	bullet.speed = 650.0
 	bullet.direction = dir
 	bullet.rotation = dir.angle()
-	bullet.global_position = global_position + dir * 20.0
+
+	var spawn_pos = global_position + dir * 20.0
 	
 	# Ajout au parent direct (la Room ou le Niveau)
 	if get_parent():
 		get_parent().add_child(bullet)
+		bullet.global_position = spawn_pos
+	else:
+		add_child(bullet)
+		bullet.global_position = spawn_pos
+
 
 func _find_player() -> void:
 	if not target_player or not is_instance_valid(target_player):
@@ -266,14 +277,17 @@ func _spawn_drops() -> void:
 	if not target_container:
 		return
 	
+	# Mémorisation précise de la position globale de mort
+	var death_pos = global_position
+	
 	# Drop de munitions
 	if ammo_drop_scene:
 		var drop = ammo_drop_scene.instantiate()
-		drop.global_position = global_position
+		target_container.add_child(drop) # 👈 add_child en premier
+		drop.global_position = death_pos # 👈 global_position en second
 		drop.ammo_amount = 5
-		target_container.call_deferred("add_child", drop)
 	
-	# Drop de bonus
+	# 2. Drop de bonus (20% de base + upgrades)
 	var bonus_chance = 0.20
 	var sm = get_node_or_null("/root/SaveManager") if is_inside_tree() else null
 	if sm:
@@ -282,5 +296,5 @@ func _spawn_drops() -> void:
 		
 	if randf() <= bonus_chance and bonus_drop_scene:
 		var bonus = bonus_drop_scene.instantiate()
-		bonus.global_position = global_position + Vector2(randf_range(-15, 15), randf_range(-15, 15))
-		target_container.call_deferred("add_child", bonus)
+		target_container.add_child(bonus) # 👈 add_child en premier
+		bonus.global_position = death_pos + Vector2(randf_range(-15, 15), randf_range(-15, 15))
