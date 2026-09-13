@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://chudscene01"]
 
-[ext_resource type="Script" path="res://scripts/ui/HUD.gd" id="1_hud"]
-[ext_resource type="PackedScene" uid="uid://cupgradeshop001" path="res://scenes/ui/UpgradeShop.tscn" id="2_shop"]
+[ext_resource type="Script" uid="uid://daxl0l4u1dunn" path="res://scripts/ui/HUD.gd" id="1_hud"]
+[ext_resource type="PackedScene" uid="uid://jd6fhoibe3g3" path="res://scenes/ui/UpgradeShop.tscn" id="2_shop"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud_bg"]
 bg_color = Color(0.08, 0.1, 0.14, 0.85)
@@ -17,6 +17,13 @@ corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.5)
 shadow_size = 4
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_bg"]
+bg_color = Color(0.12, 0.12, 0.15, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
 bg_color = Color(0.2, 0.85, 0.35, 1)
 corner_radius_top_left = 4
@@ -25,21 +32,7 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shield_fill"]
-bg_color = Color(0.2, 0.6, 1.0, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_boss_fill"]
-bg_color = Color(0.9, 0.15, 0.15, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_bg"]
-bg_color = Color(0.12, 0.12, 0.15, 0.9)
+bg_color = Color(0.2, 0.6, 1, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -52,10 +45,17 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[node name="HUD" type="CanvasLayer"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_boss_fill"]
+bg_color = Color(0.9, 0.15, 0.15, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="HUD" type="CanvasLayer" unique_id=1255432825]
 script = ExtResource("1_hud")
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="." unique_id=460203724]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -64,39 +64,39 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="BottomLeftHUD" type="PanelContainer" parent="Control"]
+[node name="BottomLeftHUD" type="PanelContainer" parent="Control" unique_id=1451100209]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 30.0
-offset_top = -210.0
-offset_right = 380.0
-offset_bottom = -25.0
+offset_left = 70.0
+offset_top = -241.0
+offset_right = 420.0
+offset_bottom = -56.0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_bg")
 
-[node name="Margin" type="MarginContainer" parent="Control/BottomLeftHUD"]
+[node name="Margin" type="MarginContainer" parent="Control/BottomLeftHUD" unique_id=441997293]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 12
 
-[node name="VBox" type="VBoxContainer" parent="Control/BottomLeftHUD/Margin"]
+[node name="VBox" type="VBoxContainer" parent="Control/BottomLeftHUD/Margin" unique_id=1974053552]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="HealthContainer" type="VBoxContainer" parent="Control/BottomLeftHUD/Margin/VBox"]
+[node name="HealthContainer" type="VBoxContainer" parent="Control/BottomLeftHUD/Margin/VBox" unique_id=119843153]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="HealthText" type="Label" parent="Control/BottomLeftHUD/Margin/VBox/HealthContainer"]
+[node name="HealthText" type="Label" parent="Control/BottomLeftHUD/Margin/VBox/HealthContainer" unique_id=1096739237]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "❤️ PV : 100 / 100"
 
-[node name="HealthBar" type="ProgressBar" parent="Control/BottomLeftHUD/Margin/VBox/HealthContainer"]
+[node name="HealthBar" type="ProgressBar" parent="Control/BottomLeftHUD/Margin/VBox/HealthContainer" unique_id=738476169]
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
@@ -104,45 +104,44 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_hp_fill")
 value = 100.0
 show_percentage = false
 
-[node name="ShieldContainer" type="VBoxContainer" parent="Control/BottomLeftHUD/Margin/VBox"]
+[node name="ShieldContainer" type="VBoxContainer" parent="Control/BottomLeftHUD/Margin/VBox" unique_id=1911124612]
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="ShieldText" type="Label" parent="Control/BottomLeftHUD/Margin/VBox/ShieldContainer"]
+[node name="ShieldText" type="Label" parent="Control/BottomLeftHUD/Margin/VBox/ShieldContainer" unique_id=2002517243]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.3, 0.75, 1, 1)
 theme_override_font_sizes/font_size = 13
 text = "🛡️ BOUCLIER : 0 / 0"
 
-[node name="ShieldBar" type="ProgressBar" parent="Control/BottomLeftHUD/Margin/VBox/ShieldContainer"]
+[node name="ShieldBar" type="ProgressBar" parent="Control/BottomLeftHUD/Margin/VBox/ShieldContainer" unique_id=1889861976]
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_shield_fill")
-value = 0.0
 show_percentage = false
 
-[node name="AmmoContainer" type="HBoxContainer" parent="Control/BottomLeftHUD/Margin/VBox"]
+[node name="AmmoContainer" type="HBoxContainer" parent="Control/BottomLeftHUD/Margin/VBox" unique_id=1428174037]
 layout_mode = 2
 
-[node name="AmmoText" type="Label" parent="Control/BottomLeftHUD/Margin/VBox/AmmoContainer"]
+[node name="AmmoText" type="Label" parent="Control/BottomLeftHUD/Margin/VBox/AmmoContainer" unique_id=1565395594]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
 theme_override_font_sizes/font_size = 14
 text = "⚡ MUNITIONS : 100"
 
-[node name="DashContainer" type="VBoxContainer" parent="Control/BottomLeftHUD/Margin/VBox"]
+[node name="DashContainer" type="VBoxContainer" parent="Control/BottomLeftHUD/Margin/VBox" unique_id=410157241]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="DashStatus" type="Label" parent="Control/BottomLeftHUD/Margin/VBox/DashContainer"]
+[node name="DashStatus" type="Label" parent="Control/BottomLeftHUD/Margin/VBox/DashContainer" unique_id=2014124746]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.3, 0.95, 0.4, 1)
 theme_override_font_sizes/font_size = 13
 text = "💨 ESQUIVE [MAJ] : 1 / 1"
 
-[node name="DashBar" type="ProgressBar" parent="Control/BottomLeftHUD/Margin/VBox/DashContainer"]
+[node name="DashBar" type="ProgressBar" parent="Control/BottomLeftHUD/Margin/VBox/DashContainer" unique_id=690072485]
 custom_minimum_size = Vector2(0, 6)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
@@ -151,7 +150,7 @@ max_value = 1.0
 value = 1.0
 show_percentage = false
 
-[node name="TopCenterHUD" type="PanelContainer" parent="Control"]
+[node name="TopCenterHUD" type="PanelContainer" parent="Control" unique_id=1892060212]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -163,21 +162,21 @@ offset_bottom = 65.0
 grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_bg")
 
-[node name="Margin" type="MarginContainer" parent="Control/TopCenterHUD"]
+[node name="Margin" type="MarginContainer" parent="Control/TopCenterHUD" unique_id=1348182633]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 8
 
-[node name="QuotaLabel" type="Label" parent="Control/TopCenterHUD/Margin"]
+[node name="QuotaLabel" type="Label" parent="Control/TopCenterHUD/Margin" unique_id=469793258]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 16
 text = "🚩 Zone 1 — Salle 1/5 | 4 / 4"
 horizontal_alignment = 1
 
-[node name="BossBarContainer" type="PanelContainer" parent="Control"]
+[node name="BossBarContainer" type="PanelContainer" parent="Control" unique_id=1473718072]
 visible = false
 layout_mode = 1
 anchors_preset = 5
@@ -190,18 +189,18 @@ offset_bottom = 125.0
 grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_bg")
 
-[node name="VBox" type="VBoxContainer" parent="Control/BossBarContainer"]
+[node name="VBox" type="VBoxContainer" parent="Control/BossBarContainer" unique_id=1096989943]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="BossNameLabel" type="Label" parent="Control/BossBarContainer/VBox"]
+[node name="BossNameLabel" type="Label" parent="Control/BossBarContainer/VBox" unique_id=1797662085]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
 theme_override_font_sizes/font_size = 14
 text = "👑 BOSS TITAN"
 horizontal_alignment = 1
 
-[node name="BossHealthBar" type="ProgressBar" parent="Control/BossBarContainer/VBox"]
+[node name="BossHealthBar" type="ProgressBar" parent="Control/BossBarContainer/VBox" unique_id=1894085938]
 custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
@@ -210,13 +209,13 @@ max_value = 3000.0
 value = 3000.0
 show_percentage = false
 
-[node name="BossHealthText" type="Label" parent="Control/BossBarContainer/VBox"]
+[node name="BossHealthText" type="Label" parent="Control/BossBarContainer/VBox" unique_id=1447809429]
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "3000 / 3000"
 horizontal_alignment = 1
 
-[node name="BonusBanner" type="Label" parent="Control"]
+[node name="BonusBanner" type="Label" parent="Control" unique_id=1047832923]
 visible = false
 layout_mode = 1
 anchors_preset = 7
@@ -238,6 +237,6 @@ text = "BONUS OBTENU !"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="UpgradeShop" parent="Control" instance=ExtResource("2_shop")]
+[node name="UpgradeShop" parent="Control" unique_id=1768665578 instance=ExtResource("2_shop")]
 visible = false
 layout_mode = 1

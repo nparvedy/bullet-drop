@@ -71,7 +71,7 @@ func _process(delta: float) -> void:
 			progressive_timer += delta
 			if progressive_timer >= progressive_interval:
 				progressive_timer = 0.0
-				_spawn_enemy(true)
+				_spawn_enemy.call_deferred(true)
 
 func _on_bounds_body_entered(body: Node2D) -> void:
 	if is_active or is_cleared or is_starting_sequence:
@@ -305,7 +305,7 @@ func _on_enemy_died(enemy: Node2D) -> void:
 					)
 				else:
 					if enemies_spawned < total_enemies:
-						_spawn_enemy(true)
+						_spawn_enemy.call_deferred(true)
 					
 	# Vérification de la complétion de la salle
 	if enemies_defeated >= total_enemies:
@@ -326,4 +326,3 @@ func _complete_room() -> void:
 	var bus = get_node_or_null("/root/EventBus") if is_inside_tree() else null
 	if bus:
 		bus.room_cleared.emit(room_index)
-
