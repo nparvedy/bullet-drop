@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://cbonusdrop001"]
+
+[ext_resource type="Script" path="res://scripts/weapons/BonusDrop.gd" id="1_bonus"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bonus"]
+radius = 24.0
+
+[node name="BonusDrop" type="Area2D"]
+collision_layer = 32
+collision_mask = 2
+script = ExtResource("1_bonus")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_bonus")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Glow" type="ColorRect" parent="Visual"]
+offset_left = -22.0
+offset_top = -22.0
+offset_right = 22.0
+offset_bottom = 22.0
+color = Color(1, 0.85, 0.2, 0.35)
+
+[node name="Background" type="ColorRect" parent="Visual"]
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 14.0
+offset_bottom = 14.0
+color = Color(0.2, 0.2, 0.2, 0.9)
+
+[node name="IconLabel" type="Label" parent="Visual"]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+theme_override_font_sizes/font_size = 18
+text = "⚔️"
+horizontal_alignment = 1
+vertical_alignment = 1

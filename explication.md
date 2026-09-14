@@ -7,133 +7,135 @@
 * **Nom du jeu :** Bullet Drop
 * **Moteur de jeu :** Godot Engine (4.x)
 * **Genre :** Top-Down Shooter / Rogue-lite d'Arène
-* **Inspirations :** *Brotato*, *Enter the Gungeon*, *Vampire Survivors*
+* **Inspirations :** *Gunfire Reborn*, *Brotato*, *Enter the Gungeon*, *Vampire Survivors*
 * **Philosophie de production :** Projet conçu **100% sur-mesure** (code, architecture, graphismes, animations, effets visuels et sonores).
 
 ---
 
 ## 🎯 2. Concept & Boucle de Gameplay (Core Loop)
 
-Le joueur incarne un survivant armé d'une arme à feu évolutive. Il doit nettoyer une succession de zones fermées remplies d'ennemis agressifs jusqu'à atteindre et vaincre le **Boss Final**.
+Le joueur progresse à travers une suite de **5 salles fermées et isolées** composant la Zone 1. À chaque salle franchie, la porte arrière se referme irrévocablement et les monstres deviennent de plus en plus puissants. La 5ᵉ salle abrite le **Boss Titan**, un adversaire redoutable doté de deux armes et d'attaques de zone dévastatrices.
 
 ```mermaid
 flowchart TD
-    A[Début de la Run - Zone 1] --> B[Éliminer les vagues d'ennemis]
-    B --> C{Ennemi tué}
-    C -->|Drop| D[Bonus d'Armes & Effets pendant la Run]
-    C -->|Gain| E[Points de Méta-Progression]
-    B --> F{Zone nettoyée ?}
-    F -->|Oui| G[Passage à la Zone Suivante]
-    G --> H{Boss Final ?}
-    H -->|Oui & Vaincu| I[Victoire !]
-    H -->|Non| B
-    B -->|Mort du Joueur| J[Écran de Mort & Boutique]
-    J --> K[Dépense des Points en Améliorations Permanentes]
-    K --> A
+    A[Début de la Run - Zone 1] --> B[Salle 1 : 4 Monstres - Niveau 1]
+    B -->|Porte Verrouillée -> Salle Nettoyée| C[Salle 2 : 6 Monstres - Niveau 2]
+    C -->|Porte Verrouillée -> Salle Nettoyée| D[Salle 3 : 8 Monstres - Niveau 3]
+    D -->|Porte Verrouillée -> Salle Nettoyée| E[Salle 4 : 10 Monstres - Niveau 4]
+    E -->|Porte Verrouillée -> Salle Nettoyée| F[Salle 5 : BOSS TITAN - 3000 PV]
+    F -->|Victoire| G[Portail de Téléportation - Zone Suivante]
+    B -->|Mort du Joueur| H[Écran de Mort & Boutique d'Amélioration]
+    C -->|Mort du Joueur| H
+    D -->|Mort du Joueur| H
+    E -->|Mort du Joueur| H
+    F -->|Mort du Joueur| H
+    H -->|Dépense des Points Méta-Progression| A
 ```
 
 ---
 
-## 🔫 3. Mécaniques de Combat & Système d'Arme
+## 👤 3. Fiche de Statistiques du Joueur
 
-### 3.1. Le Joueur & la Survie
-* **Point de départ :** Le joueur commence avec **1 seul point de vie (PV)**. La moindre erreur est fatale au départ.
-* **Mobilité :** Déplacement multidirectionnel et mécanique d'**esquive (Dash / Roulade)** avec fenêtres d'invulnérabilité.
-* **Arme initiale :** Arme à feu avec capacité de chargeur limitée nécessitant un rechargement.
+Le joueur ne gagne pas d'expérience ou de niveaux en plein combat ; ses caractéristiques de base sont déterminées par son statut et améliorées par les drops en cours de run et la méta-progression :
 
-### 3.2. Le Système "Bullet Drop" (Améliorations en Cours de Run)
-En tuant des monstres sur le terrain, ces derniers laissent tomber au sol (*drop*) des **bonus d'armes temporaires ou cumulables pour la run en cours** :
-* **Dégâts accrus :** Augmentation immédiate des dégâts par balle.
-* **Tir en cône (Shotgun spread) :** Dispersion des balles pour toucher plusieurs cibles.
-* **Multi-tirs aléatoires :** Ajout de balles supplémentaires projetées dans des directions imprévisibles ou en rafale.
-* **Effets élémentaires / Perçants :** Balles rebondissantes, explosives ou traversantes.
-
----
-
-## 🗺️ 4. Structure des Zones & Progression
-
-### 4.1. Découpage par Zones (Arènes)
-* Le jeu est découpé en plusieurs **grandes zones fermées** (à la manière de *Brotato*).
-* Chaque zone possède un environnement dégagé permettant le kiting et l'esquive.
-
-### 4.2. Quota d'Ennemis Fixe (Anti-Farm Infini)
-* **Pas de farm infini :** Chaque zone génère un **nombre déterminé d'ennemis** (ex: 20 monstres pour une zone donnée).
-* Une fois le quota d'ennemis de la zone vaincu, la porte / téléporteur vers la zone suivante s'active.
-* Les monstres peuvent arriver par vagues intenses, submergeant le joueur.
-
-### 4.3. Mort Définitive (Permadeath de la Run)
-* Si le joueur meurt, la run s'arrête instantanément et il recommence depuis la **Zone 1**.
-* Tous les bonus d'armes accumulés au sol pendant la run sont réinitialisés.
-
----
-
-## 💎 5. Méta-Progression & Boutique Post-Mortem
-
-### 5.1. Récolte et Utilisation des Points
-* Chaque monstre abattu rapporte des **Points / Crédits de Méta-progression**.
-* Ces points sont sécurisés mais utilisables **UNIQUEMENT après la mort** sur l'écran dédié.
-
-### 5.2. Arbre des Améliorations Permanentes
-Les points accumulés permettent de débloquer ou d'augmenter des statistiques persistantes :
-1. **Survie :**
-   * Vies / Points de vie de départ supplémentaires (passer de 1 PV à 2, 3, etc.).
-   * Temps d'invulnérabilité après esquive.
-2. **Capacité Offensive :**
-   * Dégâts de base de l'arme.
-   * Capacité du chargeur (plus de balles avant de recharger).
-   * Vitesse de rechargement.
-   * Cadence de tir.
-   * Chance de tirer plusieurs balles simultanément dès le départ.
-3. **Mobilité & Utilitaires :**
-   * Réduction du temps de recharge de l'esquive (cooldown).
-   * Vitesse de déplacement du personnage.
-   * Aimant à drops (rayon de ramassage des points et bonus).
-
----
-
-## 👾 6. Bestiaire, Dangers & Télégraphie des Attaques
-
-Les ennemis disposent de comportements variés obligeant le joueur à rester constamment en mouvement :
-
-| Type d'Ennemi | Comportement / Attaque | Danger & Contre |
+| Statistique | Valeur Initiale | Description & Rôle |
 | :--- | :--- | :--- |
-| **Tireur à Distance** | Tire des projectiles (lignes droites, salves, tirs prédictifs). | Esquive par déplacement ou dash. |
-| **Attaquant de Zone (AoE)** | Lance des attaques au sol couvrant une large zone. | Indicateur au sol (cercle/rectangle rouge) avant impact. Sortir impérativement de la zone. |
-| **Brute Corps-à-Corps** | Coup lourd au corps-à-corps avec charge ou balayage. | Télégraphie visuelle du cône d'attaque (telegraphing). Nécessite une esquive réflexe rapide pour éviter le one-shot. |
-| **Nuée (Swarmers)** | Monstres rapides et nombreux cherchant à encercler le joueur. | Gestion de foule via tirs en cône et tirs multiples. |
-| **Boss Final** | Combinaison de patterns de balles (Bullet Hell), invocations et attaques AoE massives. | Maîtrise totale des esquives, de la gestion du chargeur et des améliorations. |
+| **Points de Vie (PV)** | `100 PV` | Barre de vie principale. |
+| **Dégâts de Base** | `120` | Dégâts infligés par chaque projectile non critique. |
+| **Chances de Critique** | `0%` | Probabilité d'infliger un coup critique. |
+| **Dégâts Critiques** | `+50% (x1.5)` | Multiplicateur appliqué lors d'un coup critique. |
+| **Cadence de Tir** | `1 tir / 0.5s` (2 tirs/s) | Temps de recharge entre chaque tir. |
+| **Armure** | `0` | Réduit les dégâts reçus de manière proportionnelle. |
+| **Bouclier** | `0` | Jauge d'absorption de dégâts prioritaire avant les PV. |
+| **Régénération de PV** | `5 PV / sec` | Restauration continue des points de vie. |
+| **Vitesse de Déplacement**| `260 px/s` | Vitesse de course standard. |
+| **Charges d'Esquive** | `1 charge (2.0s CD)` | Dash d'invulnérabilité directionnel. |
 
 ---
 
-## 🛠️ 7. Architecture Technique Recommandée (Godot 4)
+## 🚪 4. Structure des Salles & Brouillard de Guerre (Fog of War)
 
-Pour maintenir une base de code propre, modulaire et évolutive, voici la structure de dossiers et de nœuds recommandée :
+### 4.1. Isolement & Portes Anti-Retour
+* **Portes de salle étanches :** Dès que le joueur pénètre dans une salle, la porte d'accès se referme immédiatement et se verrouille pour toujours. Aucun retour en arrière n'est possible.
+* **Verrouillage de sortie :** La porte menant à la salle suivante reste fermée et verrouillée tant que tous les ennemis de la salle courante ne sont pas vaincus.
+* **Brouillard de guerre 2D :** Chaque salle non encore découverte est plongée dans un épais brouillard noir masquant son contenu (décors, ennemis, disposition). Dès l'entrée du joueur, le voile se dissipe fluidement.
 
-```text
-res://
-├── assets/
-│   ├── sprites/          # Sprites du joueur, ennemis, armes, projectiles, drops
-│   ├── audio/            # Effets sonores (SFX) et musiques (BGM)
-│   ├── fonts/            # Polices d'interface UI
-│   └── shaders/          # Shaders d'impact, flash blanc, zones d'attaques
-├── scenes/
-│   ├── core/             # GameManager, SceneTransition, Main.tscn
-│   ├── entities/
-│   │   ├── player/       # Player.tscn, Player.gd, Hurtbox/Hitbox
-│   │   └── enemies/      # BaseEnemy.tscn, MeleeEnemy, RangedEnemy, Boss
-│   ├── weapons/          # Weapon.tscn, Bullet.tscn, WeaponDrop.tscn
-│   ├── levels/           # BaseZone.tscn, Zone1.tscn, Zone2.tscn, BossRoom.tscn
-│   └── ui/               # HUD.tscn, DeathScreen.tscn, UpgradeShop.tscn, MainMenu.tscn
-├── scripts/
-│   ├── autoloads/        # Global.gd (Sauvegardes, Points), EventBus.gd
-│   ├── resources/        # Custom Resources (.tres) pour Stats, Upgrades, WaveConfig
-│   └── components/       # HealthComponent, MovementComponent, HitboxComponent
-└── project.godot
-```
+### 4.2. Rythme & Modes d'Apparition des Salles
 
-### 🔑 Systèmes Clés à Implémenter :
-1. **`EventBus.gd` (Autoload) :** Communication découplée entre l'apparition des drops, la mort des ennemis et l'UI.
-2. **`Global.gd` / `SaveSystem.gd` :** Sauvegarde persistante des points acquis et des niveaux d'améliorations débloqués.
-3. **`WaveManager.gd` :** Contrôle précis du quota d'ennemis par zone (spawns par vagues, décompte restant, déclenchement de la fin de zone).
-4. **`DropSystem` :** Table de loot probabiliste attachée aux ennemis pour générer les bonus d'armes.
-5. **`TelegraphComponent` :** Affichage visuel (Polygon2D ou Shaders) des zones d'attaque ennemies avant déclenchement des dégâts.
+| Salle | Nom / Environnement | Niveau Monstres | Nb Ennemis | Mode d'Apparition |
+| :--- | :--- | :--- | :--- | :--- |
+| **Salle 1** | Zone de Départ | **Niveau 1** | 4 | *Apparition immédiate* en bloc. |
+| **Salle 2** | Dépôt Ouest | **Niveau 2** | 6 | *2 Vagues successives* de 3 ennemis. |
+| **Salle 3** | Grand Hall Central | **Niveau 3** | 8 | *Apparition progressive* (1 ennemi toutes les 1.3s). |
+| **Salle 4** | Laboratoire Est | **Niveau 4** | 10 | *2 Vagues intenses* de 5 ennemis rapides. |
+| **Salle 5** | Sanctuaire du Boss | **Niveau 5** | Boss (1) | **BOSS TITAN** (3000 PV). |
+
+---
+
+## 👾 5. Progression & Statistiques des Monstres
+
+Les monstres s'adaptent au numéro de la salle selon le fichier `data/monster_stats.json` et la classe `MonsterStatsDatabase.gd` :
+
+| Niveau | PV Max | Dégâts | Cadence de Tir | Vitesse | Points Donnés |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| **Niv. 1 (S1)** | 200 | 30 | 1 tir / 1.00s | 95 px/s | 1 pt |
+| **Niv. 2 (S2)** | 250 | 36 | 1 tir / 0.95s | 100 px/s | 2 pts |
+| **Niv. 3 (S3)** | 300 | 42 | 1 tir / 0.90s | 105 px/s | 3 pts |
+| **Niv. 4 (S4)** | 350 | 48 | 1 tir / 0.85s | 110 px/s | 4 pts |
+| **Niv. 5 (Minion)** | 400 | 55 | 1 tir / 0.80s | 115 px/s | 5 pts |
+
+### Formule de Calcul des Points Méta :
+$$\text{Points Gagnés} = \begin{cases} \text{Niveau du Monstre}, & \text{si Zone } = 1 \\ \text{Niveau du Monstre} \times (3 \times \text{Numéro de Zone}), & \text{si Zone } > 1 \end{cases}$$
+
+---
+
+## 👑 6. Le Boss Titan (Salle 5)
+
+* **Visuel :** Gigantesque cercle rouge doté de 2 armes à feu latérales distinctes et espacées.
+* **Points de Vie :** `3000 PV`
+* **Dégâts par Balle :** `100 dégâts`
+* **Arsenal & Patterns d'Attaque :**
+  1. **Tir Double Simultané :** Les deux canons tirent simultanément en ligne droite vers le joueur à intervalle de 0.5s.
+  2. **Tir Alterné en Rafale :** Canon gauche puis canon droit tirent à cadence élevée.
+  3. **Zone de Balles (AoE Bomb) :** Un cercle rouge d'avertissement s'affiche au sol pendant 1.2s à la position ciblée. À l'impact, une déflagration inflige **100 dégâts instantanés** et projette un anneau de 12 projectiles circulaires.
+
+---
+
+## 🎁 7. Système de Bonus en Cours de Run (Drop à 20%)
+
+À la mort de chaque ennemi, il y a **20% de chance de base** de faire tomber un orbe de bonus (en plus des munitions habituelles) :
+
+1. ⚔️ **+20% Dégâts :** Multiplicateur direct sur les dégâts infligés par l'arme.
+2. ❤️ **+50% PV Max & Soin :** Augmente de 50% la réserve de PV et soigne instantanément le joueur.
+3. ⚡ **+1 Tir par Seconde :** Augmente la cadence de tir, permettant d'enchaîner plus rapidement les clics.
+4. 🛡️ **+20% Bouclier :** Octroie ou renforce le bouclier protecteur (+20 si nul, +20% sinon).
+5. 💖 **+50% Régénération PV :** Booste la vitesse de récupération passive (ex: 5 $\to$ 7.5 PV/s).
+6. 💨 **+1 Charge d'Esquive :** Ajoute une charge de dash utilisable immédiatement.
+
+---
+
+## 💎 8. Boutique de Méta-Progression Post-Mortem
+
+Accessible après chaque mort ou victoire, la boutique permet de débloquer des bonus permanents sauvegardés dans `user://save_data.json` à travers 4 arbres :
+
+### ⚔️ Arbre d'Attaque (Offensif)
+* **Dégâts d'Arme :** +10% de dégâts par niveau (5 niveaux max).
+* **Coup Critique % :** +5% de chance de coup critique (5 niveaux max).
+* **Dégâts Critique :** +25% de bonus sur les tirs critiques (5 niveaux max).
+* **Cadence de Tir :** +10% d'accélération de cadence (5 niveaux max).
+
+### 🛡️ Arbre de Défense (Défensif)
+* **Points de Vie Max :** +20 PV de départ par niveau (5 niveaux max).
+* **Bouclier Tactique :** +20 Bouclier initial (5 niveaux max).
+* **Armure Renforcée :** +5 Armure / réduction de dégâts (5 niveaux max).
+* **Régénération de Santé :** +1.5 PV/s de régénération continue (5 niveaux max).
+
+### ⚡ Arbre de Mobilité (Tactique)
+* **Charge d'Esquive :** +1 charge consécutive de Dash (2 niveaux max).
+* **Récupération d'Esquive :** -15% de temps de recharge par niveau (5 niveaux max).
+* **Vitesse de Déplacement :** +8% de vitesse de déplacement (5 niveaux max).
+
+### 📦 Arbre de Ressources (Utilitaire)
+* **Aimant à Butin :** +35% de portée d'attraction des drops (5 niveaux max).
+* **Réserve de Munitions :** +25 munitions max au départ (5 niveaux max).
+* **Chance de Butin :** +5% de chance de faire tomber des bonus (5 niveaux max).

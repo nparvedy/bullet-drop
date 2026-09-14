@@ -1,0 +1,700 @@
+[gd_scene format=3 uid="uid://bl5yjsvqwiiqs"]
+
+[ext_resource type="Script" uid="uid://cs2l5f7h4demx" path="res://scripts/levels/Zone1.gd" id="1_zone1_script"]
+[ext_resource type="Texture2D" uid="uid://cv5hypn7x7pim" path="res://assets/sprites/environment/floor_tile.png" id="2_floor_tile"]
+[ext_resource type="PackedScene" uid="uid://cfpo0lh1je03y" path="res://scenes/entities/player/Player.tscn" id="3_player"]
+[ext_resource type="PackedScene" uid="uid://chudscene01" path="res://scenes/ui/HUD.tscn" id="5_hud"]
+[ext_resource type="Texture2D" uid="uid://dgwotsqywmd0r" path="res://assets/sprites/environment/wall_horiz.png" id="6_wall_h"]
+[ext_resource type="Texture2D" uid="uid://cop38cxfsvbe5" path="res://assets/sprites/environment/wall_vert.png" id="7_wall_v"]
+[ext_resource type="Texture2D" uid="uid://cghap3j5xcdvy" path="res://assets/sprites/environment/pillar.png" id="8_pillar"]
+[ext_resource type="Texture2D" uid="uid://cx6qmjsi3ta1n" path="res://assets/sprites/environment/crate.png" id="9_crate"]
+[ext_resource type="PackedScene" uid="uid://cdoorscene001" path="res://scenes/levels/Door.tscn" id="11_door"]
+[ext_resource type="Script" uid="uid://bkv88e1dfouya" path="res://scripts/levels/Room.gd" id="12_room"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_v_700"]
+size = Vector2(32, 700)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_v_900"]
+size = Vector2(32, 900)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_h_r1_r2"]
+size = Vector2(2400, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_h_r3"]
+size = Vector2(1400, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_h_r4"]
+size = Vector2(1200, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_h_r5"]
+size = Vector2(1600, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_partition_segment"]
+size = Vector2(32, 270)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pillar"]
+radius = 28.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_crate"]
+size = Vector2(56, 56)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_room1_bounds"]
+size = Vector2(1200, 700)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_room2_bounds"]
+size = Vector2(1200, 700)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_room3_bounds"]
+size = Vector2(1400, 800)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_room4_bounds"]
+size = Vector2(1200, 700)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_room5_bounds"]
+size = Vector2(1600, 900)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_portal"]
+radius = 45.0
+
+[node name="Zone1" type="Node2D" unique_id=1493519161]
+script = ExtResource("1_zone1_script")
+
+[node name="BackgroundFloors" type="Node2D" parent="." unique_id=698414782]
+z_index = -10
+
+[node name="Floor_Room1" type="Sprite2D" parent="BackgroundFloors" unique_id=1285430250]
+texture_repeat = 2
+position = Vector2(700, 500)
+texture = ExtResource("2_floor_tile")
+region_enabled = true
+region_rect = Rect2(0, 0, 1200, 700)
+
+[node name="Floor_Room2" type="Sprite2D" parent="BackgroundFloors" unique_id=936289338]
+texture_repeat = 2
+position = Vector2(1900, 500)
+texture = ExtResource("2_floor_tile")
+region_enabled = true
+region_rect = Rect2(0, 0, 1200, 700)
+
+[node name="Floor_Room3" type="Sprite2D" parent="BackgroundFloors" unique_id=2125992487]
+texture_repeat = 2
+position = Vector2(3200, 500)
+texture = ExtResource("2_floor_tile")
+region_enabled = true
+region_rect = Rect2(0, 0, 1400, 800)
+
+[node name="Floor_Room4" type="Sprite2D" parent="BackgroundFloors" unique_id=414589171]
+texture_repeat = 2
+position = Vector2(4500, 500)
+texture = ExtResource("2_floor_tile")
+region_enabled = true
+region_rect = Rect2(0, 0, 1200, 700)
+
+[node name="Floor_Room5" type="Sprite2D" parent="BackgroundFloors" unique_id=1083480546]
+texture_repeat = 2
+position = Vector2(5900, 500)
+texture = ExtResource("2_floor_tile")
+region_enabled = true
+region_rect = Rect2(0, 0, 1600, 900)
+
+[node name="Obstacles" type="Node2D" parent="." unique_id=1750439665]
+
+[node name="OuterWalls" type="Node2D" parent="Obstacles" unique_id=1602528739]
+
+[node name="Wall_Left_Outer" type="StaticBody2D" parent="Obstacles/OuterWalls" unique_id=672277688]
+position = Vector2(84, 500)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/OuterWalls/Wall_Left_Outer" unique_id=1745807681]
+texture_repeat = 2
+texture = ExtResource("7_wall_v")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 700)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/OuterWalls/Wall_Left_Outer" unique_id=162756721]
+shape = SubResource("RectangleShape2D_wall_v_700")
+
+[node name="Wall_Right_Outer" type="StaticBody2D" parent="Obstacles/OuterWalls" unique_id=1545663322]
+position = Vector2(6716, 500)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/OuterWalls/Wall_Right_Outer" unique_id=1626035357]
+texture_repeat = 2
+texture = ExtResource("7_wall_v")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 900)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/OuterWalls/Wall_Right_Outer" unique_id=739573962]
+shape = SubResource("RectangleShape2D_wall_v_900")
+
+[node name="Wall_Top_R1_R2" type="StaticBody2D" parent="Obstacles/OuterWalls" unique_id=554596545]
+position = Vector2(1300, 134)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/OuterWalls/Wall_Top_R1_R2" unique_id=2075203101]
+texture_repeat = 2
+texture = ExtResource("6_wall_h")
+region_enabled = true
+region_rect = Rect2(0, 0, 2400, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/OuterWalls/Wall_Top_R1_R2" unique_id=428328587]
+shape = SubResource("RectangleShape2D_wall_h_r1_r2")
+
+[node name="Wall_Bottom_R1_R2" type="StaticBody2D" parent="Obstacles/OuterWalls" unique_id=1108067443]
+position = Vector2(1300, 866)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/OuterWalls/Wall_Bottom_R1_R2" unique_id=1216628655]
+texture_repeat = 2
+texture = ExtResource("6_wall_h")
+region_enabled = true
+region_rect = Rect2(0, 0, 2400, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/OuterWalls/Wall_Bottom_R1_R2" unique_id=1678170391]
+shape = SubResource("RectangleShape2D_wall_h_r1_r2")
+
+[node name="Wall_Top_R3" type="StaticBody2D" parent="Obstacles/OuterWalls" unique_id=2044638906]
+position = Vector2(3200, 84)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/OuterWalls/Wall_Top_R3" unique_id=836503592]
+texture_repeat = 2
+texture = ExtResource("6_wall_h")
+region_enabled = true
+region_rect = Rect2(0, 0, 1400, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/OuterWalls/Wall_Top_R3" unique_id=988211597]
+shape = SubResource("RectangleShape2D_wall_h_r3")
+
+[node name="Wall_Bottom_R3" type="StaticBody2D" parent="Obstacles/OuterWalls" unique_id=727204734]
+position = Vector2(3200, 916)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/OuterWalls/Wall_Bottom_R3" unique_id=409908231]
+texture_repeat = 2
+texture = ExtResource("6_wall_h")
+region_enabled = true
+region_rect = Rect2(0, 0, 1400, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/OuterWalls/Wall_Bottom_R3" unique_id=1941033791]
+shape = SubResource("RectangleShape2D_wall_h_r3")
+
+[node name="Wall_Top_R4" type="StaticBody2D" parent="Obstacles/OuterWalls" unique_id=1717885568]
+position = Vector2(4500, 134)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/OuterWalls/Wall_Top_R4" unique_id=1434338535]
+texture_repeat = 2
+texture = ExtResource("6_wall_h")
+region_enabled = true
+region_rect = Rect2(0, 0, 1200, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/OuterWalls/Wall_Top_R4" unique_id=1522406206]
+shape = SubResource("RectangleShape2D_wall_h_r4")
+
+[node name="Wall_Bottom_R4" type="StaticBody2D" parent="Obstacles/OuterWalls" unique_id=294957441]
+position = Vector2(4500, 866)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/OuterWalls/Wall_Bottom_R4" unique_id=56912162]
+texture_repeat = 2
+texture = ExtResource("6_wall_h")
+region_enabled = true
+region_rect = Rect2(0, 0, 1200, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/OuterWalls/Wall_Bottom_R4" unique_id=737879834]
+shape = SubResource("RectangleShape2D_wall_h_r4")
+
+[node name="Wall_Top_R5" type="StaticBody2D" parent="Obstacles/OuterWalls" unique_id=861945754]
+position = Vector2(5900, 34)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/OuterWalls/Wall_Top_R5" unique_id=1741942949]
+texture_repeat = 2
+texture = ExtResource("6_wall_h")
+region_enabled = true
+region_rect = Rect2(0, 0, 1600, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/OuterWalls/Wall_Top_R5" unique_id=551537238]
+shape = SubResource("RectangleShape2D_wall_h_r5")
+
+[node name="Wall_Bottom_R5" type="StaticBody2D" parent="Obstacles/OuterWalls" unique_id=68254717]
+position = Vector2(5900, 966)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/OuterWalls/Wall_Bottom_R5" unique_id=1486600173]
+texture_repeat = 2
+texture = ExtResource("6_wall_h")
+region_enabled = true
+region_rect = Rect2(0, 0, 1600, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/OuterWalls/Wall_Bottom_R5" unique_id=1864416970]
+shape = SubResource("RectangleShape2D_wall_h_r5")
+
+[node name="PartitionWalls" type="Node2D" parent="Obstacles" unique_id=1329167604]
+
+[node name="Wall_P1_Top" type="StaticBody2D" parent="Obstacles/PartitionWalls" unique_id=1179227858]
+position = Vector2(1300, 285)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/PartitionWalls/Wall_P1_Top" unique_id=897878622]
+texture_repeat = 2
+texture = ExtResource("7_wall_v")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 270)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/PartitionWalls/Wall_P1_Top" unique_id=1494554785]
+shape = SubResource("RectangleShape2D_partition_segment")
+
+[node name="Wall_P1_Bottom" type="StaticBody2D" parent="Obstacles/PartitionWalls" unique_id=1102887724]
+position = Vector2(1300, 715)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/PartitionWalls/Wall_P1_Bottom" unique_id=572517446]
+texture_repeat = 2
+texture = ExtResource("7_wall_v")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 270)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/PartitionWalls/Wall_P1_Bottom" unique_id=1101227223]
+shape = SubResource("RectangleShape2D_partition_segment")
+
+[node name="Wall_P2_Top" type="StaticBody2D" parent="Obstacles/PartitionWalls" unique_id=137377313]
+position = Vector2(2500, 285)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/PartitionWalls/Wall_P2_Top" unique_id=692547480]
+texture_repeat = 2
+texture = ExtResource("7_wall_v")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 270)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/PartitionWalls/Wall_P2_Top" unique_id=1591244869]
+shape = SubResource("RectangleShape2D_partition_segment")
+
+[node name="Wall_P2_Bottom" type="StaticBody2D" parent="Obstacles/PartitionWalls" unique_id=2027262445]
+position = Vector2(2500, 715)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/PartitionWalls/Wall_P2_Bottom" unique_id=2040001110]
+texture_repeat = 2
+texture = ExtResource("7_wall_v")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 270)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/PartitionWalls/Wall_P2_Bottom" unique_id=1245284068]
+shape = SubResource("RectangleShape2D_partition_segment")
+
+[node name="Wall_P3_Top" type="StaticBody2D" parent="Obstacles/PartitionWalls" unique_id=616298712]
+position = Vector2(3900, 285)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/PartitionWalls/Wall_P3_Top" unique_id=1087307037]
+texture_repeat = 2
+texture = ExtResource("7_wall_v")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 270)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/PartitionWalls/Wall_P3_Top" unique_id=1007637189]
+shape = SubResource("RectangleShape2D_partition_segment")
+
+[node name="Wall_P3_Bottom" type="StaticBody2D" parent="Obstacles/PartitionWalls" unique_id=184870823]
+position = Vector2(3900, 715)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/PartitionWalls/Wall_P3_Bottom" unique_id=26325392]
+texture_repeat = 2
+texture = ExtResource("7_wall_v")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 270)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/PartitionWalls/Wall_P3_Bottom" unique_id=1446945537]
+shape = SubResource("RectangleShape2D_partition_segment")
+
+[node name="Wall_P4_Top" type="StaticBody2D" parent="Obstacles/PartitionWalls" unique_id=517595269]
+position = Vector2(5100, 285)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/PartitionWalls/Wall_P4_Top" unique_id=1672529942]
+texture_repeat = 2
+texture = ExtResource("7_wall_v")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 270)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/PartitionWalls/Wall_P4_Top" unique_id=1021671562]
+shape = SubResource("RectangleShape2D_partition_segment")
+
+[node name="Wall_P4_Bottom" type="StaticBody2D" parent="Obstacles/PartitionWalls" unique_id=1165391557]
+position = Vector2(5100, 715)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/PartitionWalls/Wall_P4_Bottom" unique_id=293191132]
+texture_repeat = 2
+texture = ExtResource("7_wall_v")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 270)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/PartitionWalls/Wall_P4_Bottom" unique_id=1937852846]
+shape = SubResource("RectangleShape2D_partition_segment")
+
+[node name="InnerObstacles" type="Node2D" parent="Obstacles" unique_id=487803458]
+
+[node name="Pillar_R3_1" type="StaticBody2D" parent="Obstacles/InnerObstacles" unique_id=1697046317]
+position = Vector2(2950, 360)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/InnerObstacles/Pillar_R3_1" unique_id=1879853719]
+texture = ExtResource("8_pillar")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/InnerObstacles/Pillar_R3_1" unique_id=1171228422]
+shape = SubResource("CircleShape2D_pillar")
+
+[node name="Pillar_R3_2" type="StaticBody2D" parent="Obstacles/InnerObstacles" unique_id=66968164]
+position = Vector2(3450, 360)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/InnerObstacles/Pillar_R3_2" unique_id=1237351471]
+texture = ExtResource("8_pillar")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/InnerObstacles/Pillar_R3_2" unique_id=1648401204]
+shape = SubResource("CircleShape2D_pillar")
+
+[node name="Pillar_R3_3" type="StaticBody2D" parent="Obstacles/InnerObstacles" unique_id=1229987719]
+position = Vector2(2950, 640)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/InnerObstacles/Pillar_R3_3" unique_id=531998024]
+texture = ExtResource("8_pillar")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/InnerObstacles/Pillar_R3_3" unique_id=893933890]
+shape = SubResource("CircleShape2D_pillar")
+
+[node name="Pillar_R3_4" type="StaticBody2D" parent="Obstacles/InnerObstacles" unique_id=205645099]
+position = Vector2(3450, 640)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/InnerObstacles/Pillar_R3_4" unique_id=1254823901]
+texture = ExtResource("8_pillar")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/InnerObstacles/Pillar_R3_4" unique_id=456880691]
+shape = SubResource("CircleShape2D_pillar")
+
+[node name="Crate_R2_1" type="StaticBody2D" parent="Obstacles/InnerObstacles" unique_id=92759689]
+position = Vector2(1750, 360)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/InnerObstacles/Crate_R2_1" unique_id=1376955398]
+texture = ExtResource("9_crate")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/InnerObstacles/Crate_R2_1" unique_id=1449811624]
+shape = SubResource("RectangleShape2D_crate")
+
+[node name="Crate_R2_2" type="StaticBody2D" parent="Obstacles/InnerObstacles" unique_id=1766645840]
+position = Vector2(2050, 640)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/InnerObstacles/Crate_R2_2" unique_id=1339727022]
+texture = ExtResource("9_crate")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/InnerObstacles/Crate_R2_2" unique_id=1542959343]
+shape = SubResource("RectangleShape2D_crate")
+
+[node name="Crate_R4_1" type="StaticBody2D" parent="Obstacles/InnerObstacles" unique_id=173318303]
+position = Vector2(4350, 360)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/InnerObstacles/Crate_R4_1" unique_id=820391850]
+texture = ExtResource("9_crate")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/InnerObstacles/Crate_R4_1" unique_id=978383304]
+shape = SubResource("RectangleShape2D_crate")
+
+[node name="Crate_R4_2" type="StaticBody2D" parent="Obstacles/InnerObstacles" unique_id=2032392531]
+position = Vector2(4650, 640)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/InnerObstacles/Crate_R4_2" unique_id=1120981157]
+texture = ExtResource("9_crate")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/InnerObstacles/Crate_R4_2" unique_id=1160142824]
+shape = SubResource("RectangleShape2D_crate")
+
+[node name="Pillar_R5_1" type="StaticBody2D" parent="Obstacles/InnerObstacles" unique_id=1009080779]
+position = Vector2(5500, 300)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/InnerObstacles/Pillar_R5_1" unique_id=1740971232]
+texture = ExtResource("8_pillar")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/InnerObstacles/Pillar_R5_1" unique_id=24726713]
+shape = SubResource("CircleShape2D_pillar")
+
+[node name="Pillar_R5_2" type="StaticBody2D" parent="Obstacles/InnerObstacles" unique_id=533830266]
+position = Vector2(5500, 700)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/InnerObstacles/Pillar_R5_2" unique_id=370419257]
+texture = ExtResource("8_pillar")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/InnerObstacles/Pillar_R5_2" unique_id=2084319160]
+shape = SubResource("CircleShape2D_pillar")
+
+[node name="Pillar_R5_3" type="StaticBody2D" parent="Obstacles/InnerObstacles" unique_id=1659810201]
+position = Vector2(6300, 300)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/InnerObstacles/Pillar_R5_3" unique_id=1528995799]
+texture = ExtResource("8_pillar")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/InnerObstacles/Pillar_R5_3" unique_id=322853487]
+shape = SubResource("CircleShape2D_pillar")
+
+[node name="Pillar_R5_4" type="StaticBody2D" parent="Obstacles/InnerObstacles" unique_id=1033312072]
+position = Vector2(6300, 700)
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Obstacles/InnerObstacles/Pillar_R5_4" unique_id=1187710640]
+texture = ExtResource("8_pillar")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/InnerObstacles/Pillar_R5_4" unique_id=886079165]
+shape = SubResource("CircleShape2D_pillar")
+
+[node name="Doors" type="Node2D" parent="." unique_id=270742912]
+
+[node name="Door1_R1_R2" parent="Doors" unique_id=1268948995 instance=ExtResource("11_door")]
+position = Vector2(1300, 500)
+orientation = "vertical"
+
+[node name="Door2_R2_R3" parent="Doors" unique_id=1708765292 instance=ExtResource("11_door")]
+position = Vector2(2500, 500)
+orientation = "vertical"
+
+[node name="Door3_R3_R4" parent="Doors" unique_id=1711991201 instance=ExtResource("11_door")]
+position = Vector2(3900, 500)
+orientation = "vertical"
+
+[node name="Door4_R4_R5" parent="Doors" unique_id=955813386 instance=ExtResource("11_door")]
+position = Vector2(5100, 500)
+orientation = "vertical"
+
+[node name="Rooms" type="Node2D" parent="." unique_id=540407685]
+
+[node name="Room1" type="Node2D" parent="Rooms" unique_id=1732596174 node_paths=PackedStringArray("exit_door")]
+position = Vector2(700, 500)
+script = ExtResource("12_room")
+room_name = "Zone de Départ"
+exit_door = NodePath("../../Doors/Door1_R1_R2")
+
+[node name="Bounds" type="Area2D" parent="Rooms/Room1" unique_id=1464698582]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Rooms/Room1/Bounds" unique_id=267282406]
+shape = SubResource("RectangleShape2D_room1_bounds")
+
+[node name="FogOverlay" type="ColorRect" parent="Rooms/Room1" unique_id=36291908]
+visible = false
+offset_left = -600.0
+offset_top = -350.0
+offset_right = 600.0
+offset_bottom = 350.0
+mouse_filter = 2
+color = Color(0.04, 0.05, 0.08, 0.98)
+
+[node name="Spawners" type="Node2D" parent="Rooms/Room1" unique_id=1360688703]
+
+[node name="Spawner1" type="Marker2D" parent="Rooms/Room1/Spawners" unique_id=41399235]
+position = Vector2(-56, -175)
+
+[node name="Spawner2" type="Marker2D" parent="Rooms/Room1/Spawners" unique_id=1034807009]
+position = Vector2(200, -150)
+
+[node name="Spawner3" type="Marker2D" parent="Rooms/Room1/Spawners" unique_id=1212956007]
+position = Vector2(29, 159)
+
+[node name="Spawner4" type="Marker2D" parent="Rooms/Room1/Spawners" unique_id=1628419313]
+position = Vector2(200, 150)
+
+[node name="Enemies" type="Node2D" parent="Rooms/Room1" unique_id=460612963]
+
+[node name="Room2" type="Node2D" parent="Rooms" unique_id=1856875310 node_paths=PackedStringArray("entry_door", "exit_door")]
+position = Vector2(1900, 500)
+script = ExtResource("12_room")
+room_index = 2
+room_name = "Dépôt Ouest"
+enemy_level = 2
+spawn_mode = 1
+total_enemies = 6
+entry_door = NodePath("../../Doors/Door1_R1_R2")
+exit_door = NodePath("../../Doors/Door2_R2_R3")
+
+[node name="Bounds" type="Area2D" parent="Rooms/Room2" unique_id=1012320206]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Rooms/Room2/Bounds" unique_id=711051811]
+shape = SubResource("RectangleShape2D_room2_bounds")
+
+[node name="FogOverlay" type="ColorRect" parent="Rooms/Room2" unique_id=1862787678]
+offset_left = -600.0
+offset_top = -350.0
+offset_right = 600.0
+offset_bottom = 350.0
+mouse_filter = 2
+color = Color(0.04, 0.05, 0.08, 0.98)
+
+[node name="Spawners" type="Node2D" parent="Rooms/Room2" unique_id=2090766372]
+
+[node name="Spawner1" type="Marker2D" parent="Rooms/Room2/Spawners" unique_id=1449811476]
+position = Vector2(-300, -150)
+
+[node name="Spawner2" type="Marker2D" parent="Rooms/Room2/Spawners" unique_id=533924679]
+position = Vector2(300, -150)
+
+[node name="Spawner3" type="Marker2D" parent="Rooms/Room2/Spawners" unique_id=1144315672]
+position = Vector2(-300, 150)
+
+[node name="Spawner4" type="Marker2D" parent="Rooms/Room2/Spawners" unique_id=1395414021]
+position = Vector2(300, 150)
+
+[node name="Enemies" type="Node2D" parent="Rooms/Room2" unique_id=719904680]
+
+[node name="Room3" type="Node2D" parent="Rooms" unique_id=337282695 node_paths=PackedStringArray("entry_door", "exit_door")]
+position = Vector2(3200, 500)
+script = ExtResource("12_room")
+room_index = 3
+room_name = "Grand Hall Central"
+enemy_level = 3
+spawn_mode = 2
+total_enemies = 8
+progressive_interval = 1.3
+entry_door = NodePath("../../Doors/Door2_R2_R3")
+exit_door = NodePath("../../Doors/Door3_R3_R4")
+
+[node name="Bounds" type="Area2D" parent="Rooms/Room3" unique_id=1855370907]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Rooms/Room3/Bounds" unique_id=1929987083]
+shape = SubResource("RectangleShape2D_room3_bounds")
+
+[node name="FogOverlay" type="ColorRect" parent="Rooms/Room3" unique_id=227420817]
+offset_left = -700.0
+offset_top = -400.0
+offset_right = 700.0
+offset_bottom = 400.0
+mouse_filter = 2
+color = Color(0.04, 0.05, 0.08, 0.98)
+
+[node name="Spawners" type="Node2D" parent="Rooms/Room3" unique_id=2081686689]
+
+[node name="Spawner1" type="Marker2D" parent="Rooms/Room3/Spawners" unique_id=948936586]
+position = Vector2(-350, -200)
+
+[node name="Spawner2" type="Marker2D" parent="Rooms/Room3/Spawners" unique_id=1161712113]
+position = Vector2(350, -200)
+
+[node name="Spawner3" type="Marker2D" parent="Rooms/Room3/Spawners" unique_id=834511905]
+position = Vector2(-350, 200)
+
+[node name="Spawner4" type="Marker2D" parent="Rooms/Room3/Spawners" unique_id=1505229101]
+position = Vector2(350, 200)
+
+[node name="Enemies" type="Node2D" parent="Rooms/Room3" unique_id=1437840152]
+
+[node name="Room4" type="Node2D" parent="Rooms" unique_id=76083641 node_paths=PackedStringArray("entry_door", "exit_door")]
+position = Vector2(4500, 500)
+script = ExtResource("12_room")
+room_index = 4
+room_name = "Avant-Poste Fortifié"
+enemy_level = 4
+spawn_mode = 1
+total_enemies = 10
+entry_door = NodePath("../../Doors/Door3_R3_R4")
+exit_door = NodePath("../../Doors/Door4_R4_R5")
+
+[node name="Bounds" type="Area2D" parent="Rooms/Room4" unique_id=275120147]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Rooms/Room4/Bounds" unique_id=1245010455]
+shape = SubResource("RectangleShape2D_room4_bounds")
+
+[node name="FogOverlay" type="ColorRect" parent="Rooms/Room4" unique_id=1776443906]
+offset_left = -600.0
+offset_top = -350.0
+offset_right = 600.0
+offset_bottom = 350.0
+mouse_filter = 2
+color = Color(0.04, 0.05, 0.08, 0.98)
+
+[node name="Spawners" type="Node2D" parent="Rooms/Room4" unique_id=471937960]
+
+[node name="Spawner1" type="Marker2D" parent="Rooms/Room4/Spawners" unique_id=1357339881]
+position = Vector2(-250, -150)
+
+[node name="Spawner2" type="Marker2D" parent="Rooms/Room4/Spawners" unique_id=33324036]
+position = Vector2(250, -150)
+
+[node name="Spawner3" type="Marker2D" parent="Rooms/Room4/Spawners" unique_id=1223238232]
+position = Vector2(-250, 150)
+
+[node name="Spawner4" type="Marker2D" parent="Rooms/Room4/Spawners" unique_id=1034474395]
+position = Vector2(250, 150)
+
+[node name="Enemies" type="Node2D" parent="Rooms/Room4" unique_id=1637592657]
+
+[node name="Room5_Boss" type="Node2D" parent="Rooms" unique_id=965930283 node_paths=PackedStringArray("entry_door")]
+position = Vector2(5900, 500)
+script = ExtResource("12_room")
+room_index = 5
+room_name = "Sanctuaire du Titan"
+enemy_level = 5
+spawn_mode = 3
+total_enemies = 1
+entry_door = NodePath("../../Doors/Door4_R4_R5")
+
+[node name="Bounds" type="Area2D" parent="Rooms/Room5_Boss" unique_id=1838037673]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Rooms/Room5_Boss/Bounds" unique_id=102636063]
+shape = SubResource("RectangleShape2D_room5_bounds")
+
+[node name="FogOverlay" type="ColorRect" parent="Rooms/Room5_Boss" unique_id=738284717]
+offset_left = -800.0
+offset_top = -450.0
+offset_right = 800.0
+offset_bottom = 450.0
+mouse_filter = 2
+color = Color(0.04, 0.05, 0.08, 0.98)
+
+[node name="Spawners" type="Node2D" parent="Rooms/Room5_Boss" unique_id=178502878]
+
+[node name="Spawner1" type="Marker2D" parent="Rooms/Room5_Boss/Spawners" unique_id=1427057216]
+
+[node name="Enemies" type="Node2D" parent="Rooms/Room5_Boss" unique_id=961767373]
+
+[node name="ExitPortal" type="Area2D" parent="." unique_id=62535081]
+position = Vector2(6450, 500)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitPortal" unique_id=1319302487]
+shape = SubResource("CircleShape2D_portal")
+
+[node name="PortalRing" type="Polygon2D" parent="ExitPortal" unique_id=179905210]
+color = Color(0.2, 0.9, 1, 0.6)
+polygon = PackedVector2Array(0, -40, 28, -28, 40, 0, 28, 28, 0, 40, -28, 28, -40, 0, -28, -28)
+
+[node name="PortalInner" type="Polygon2D" parent="ExitPortal" unique_id=1580159368]
+color = Color(0.8, 1, 0.9, 0.85)
+polygon = PackedVector2Array(0, -25, 18, -18, 25, 0, 18, 18, 0, 25, -18, 18, -25, 0, -18, -18)
+
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=2013023912]
+position = Vector2(350, 500)
+
+[node name="Player" parent="." unique_id=503912278 instance=ExtResource("3_player")]
+position = Vector2(350, 500)
+
+[node name="HUD" parent="." unique_id=1550746810 instance=ExtResource("5_hud")]

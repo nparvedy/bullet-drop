@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://cenemyscene01"]
+
+[ext_resource type="Script" path="res://scripts/entities/enemies/Enemy.gd" id="1_enemy"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/enemy_chaser.png" id="2_body"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/enemy_eyes.png" id="3_eyes"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/enemy_pupils.png" id="4_pupils"]
+[ext_resource type="Texture2D" path="res://assets/sprites/weapons/weapon_pistol.png" id="5_gun"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_enemy"]
+radius = 16.0
+
+[node name="Enemy" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 7
+script = ExtResource("1_enemy")
+
+[node name="BodySprite" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_body")
+
+[node name="Eyes" type="Node2D" parent="."]
+
+[node name="EyesBase" type="Sprite2D" parent="Eyes"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_eyes")
+
+[node name="Pupils" type="Sprite2D" parent="Eyes"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_pupils")
+
+[node name="GunSprite" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(14, 0)
+scale = Vector2(0.45, 0.45)
+texture = ExtResource("5_gun")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_enemy")
+
+[node name="HealthBarContainer" type="Node2D" parent="."]
+position = Vector2(0, -26)
+
+[node name="Bg" type="ColorRect" parent="HealthBarContainer"]
+offset_left = -18.0
+offset_top = -3.0
+offset_right = 18.0
+offset_bottom = 3.0
+color = Color(0.1, 0.1, 0.1, 0.85)
+
+[node name="DamageLag" type="ColorRect" parent="HealthBarContainer"]
+offset_left = -18.0
+offset_top = -3.0
+offset_right = 18.0
+offset_bottom = 3.0
+color = Color(1, 0.85, 0.3, 0.9)
+
+[node name="Fill" type="ColorRect" parent="HealthBarContainer"]
+offset_left = -18.0
+offset_top = -3.0
+offset_right = 18.0
+offset_bottom = 3.0
+color = Color(0.2, 0.85, 0.3, 1)
