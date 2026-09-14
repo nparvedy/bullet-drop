@@ -167,6 +167,7 @@ func _start_spawning() -> void:
 					_spawn_enemy(true)
 		SpawnMode.WAVES:
 			current_wave = 1
+			@warning_ignore("integer_division")
 			var count_in_wave = total_enemies / wave_count
 			for i in range(count_in_wave):
 				var delay = i * 0.22
@@ -287,6 +288,7 @@ func _on_enemy_died(enemy: Node2D) -> void:
 		
 	# Vérification du passage à la vague suivante pour le mode WAVES
 	if spawn_mode == SpawnMode.WAVES and current_wave < wave_count:
+		@warning_ignore("integer_division")
 		var wave_size = total_enemies / wave_count
 		if active_enemies.size() == 0 and enemies_spawned < total_enemies:
 			current_wave += 1

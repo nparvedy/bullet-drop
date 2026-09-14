@@ -39,13 +39,13 @@ Conformément à la règle de progression, nous résolvons **une seule étape à
 ### ➗ Groupe B : Divisions Entières Troncantes (`integer_division` dans `Room.gd`)
 > **Diagnostic :** Godot prévient que diviser deux nombres entiers (`int / int`) tronque la virgule sans arrondi, risquant de masquer des erreurs de calcul.
 
-- [ ] **Étape 5 :** Sécuriser la division entière du calcul de vague initiale dans `Room.gd` (Ligne 170 : `var count_in_wave = total_enemies / wave_count`)
-- [ ] **Étape 6 :** Sécuriser la division entière du calcul de vague suivante dans `Room.gd` (Ligne 290 : `var wave_size = total_enemies / wave_count`)
+- [x] **Étape 5 :** Sécuriser la division entière du calcul de vague initiale dans `Room.gd` (Ligne 170 : `var count_in_wave = total_enemies / wave_count`)
+- [x] **Étape 6 :** Sécuriser la division entière du calcul de vague suivante dans `Room.gd` (Ligne 290 : `var wave_size = total_enemies / wave_count`)
 
 ---
 
 ## 📍 Statut Actuel
-- **Terminé :** Étapes 1 à 4 (Les 19 avertissements `unused_signal` d'EventBus.gd sont résolus)
-- **En cours :** Étape 5 (Division entière vague initiale dans `Room.gd:170`)
-- **Prochaine étape :** Étape 6 (Division entière vague suivante dans `Room.gd:290`)
+- **🎉 TOUTES LES ÉTAPES SONT TERMINÉES (6/6) !**
+- Le panneau de débogage Godot est désormais à **0 erreur et 0 avertissement**.
+
 
